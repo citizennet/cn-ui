@@ -375,18 +375,21 @@
       .module('cn.ui')
       .directive('cnIframeHeight', cnIframeHeight);
 
-  cnIframeHeight.$inject = ['$window', '$timeout'];
-  function cnIframeHeight($window, $timeout) {
+  cnIframeHeight.$inject = ['$timeout'];
+  function cnIframeHeight($timeout) {
     return {
       restrict: 'A',
       link: Link
     };
 
-    function Link(scope, elem) {
+    function Link($scope, elem, attrs) {
       var body, $body;
-      var window = elem.get(0).contentWindow;
+      var insurance = 0;
 
-      activate();
+      $scope.$watch(function(){ return attrs.ngSrc; }, function() {
+        insurance = 0;
+        activate();
+      });
 
       ////////
 
@@ -396,6 +399,11 @@
         if(body && $body.height()) {
           elem.height($body.height() + 2);
           $body.find('img').on('load', activate);
+          if(!insurance) {
+            ++insurance;
+            $timeout(activate, 200);
+            $timeout(activate, 500);
+          }
         }
         else {
           $timeout(activate, 100);
@@ -403,7 +411,7 @@
       }
 
       function getBody() {
-        return elem.get(0).contentDocument.body;
+        return elem.get(0).contentDocument && elem.get(0).contentDocument.body;
       }
     }
   }
