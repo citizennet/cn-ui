@@ -20,8 +20,8 @@
           },
 
           link: function($scope) {
-            if(fbObject.twitterLink) {
-              $scope.link = fbObject.twitterLink;
+            if($scope.fbObject.twitterLink) {
+              $scope.link = $scope.fbObject.twitterLink;
             }
             else if(_.has($scope.fbObject, 'fbCampaignGroupId')) {
               if($scope.fbObject.fbCampaignGroupId) {

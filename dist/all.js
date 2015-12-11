@@ -447,8 +447,8 @@
           },
 
           link: function($scope) {
-            if(fbObject.twitterLink) {
-              $scope.link = fbObject.twitterLink;
+            if($scope.fbObject.twitterLink) {
+              $scope.link = $scope.fbObject.twitterLink;
             }
             else if(_.has($scope.fbObject, 'fbCampaignGroupId')) {
               if($scope.fbObject.fbCampaignGroupId) {
@@ -780,10 +780,18 @@
             var bottomOffset = attrs.cnResponsiveHeight || 0;
             var height = w.height() - topOffset - bottomOffset;
             height = height ? height + 'px' : 'auto';
-            elem.css({
+            if (attrs.cnSetMaxHeight) {
+              elem.css({
               'max-height': height,
               'overflow': 'auto'
+            });  
+            } else {
+              elem.css({
+              'height': height,
+              'overflow': 'auto'
             });
+            }
+            
           }
         }
         else {
