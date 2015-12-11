@@ -303,17 +303,26 @@
       vm.$parsers.unshift(function(val) {
         //console.log('parser:', val, elem[0].value, vm);
         if(!val) return 0;
-        return format === 'dollars' ? parseFloat(val) : _.multiply(val, 100);
+        if(format === 'cents') {
+          return _.multiply(val, 100);
+        }
+        if(format === 'microcents') {
+          return _.multiply(val, 1000000);
+        }
+        return parseFloat(val);
       });
 
       vm.$formatters.unshift(function(val) {
         //console.log('formatter:', vm.$modelValue, val, vm);
         if(!val) val = '';
-        else if(format === 'dollars') {
-          val = _.floor(val, 2) || '';
+        else if(format === 'cents') {
+          val = _.floor(val / 100, 2) || '';
+        }
+        else if(format === 'microcents') {
+          val = _.floor(val / 1000000, 2) || '';
         }
         else {
-          val = _.floor(val / 100, 2) || '';
+          val = _.floor(val, 2) || '';
         }
         //return elem[0].value = val;
         vm.$setDirty();
