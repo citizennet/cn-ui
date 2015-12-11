@@ -45,18 +45,19 @@
             var bottomOffset = attrs.cnResponsiveHeight || 0;
             var height = w.height() - topOffset - bottomOffset;
             height = height ? height + 'px' : 'auto';
-            if (attrs.cnSetMaxHeight) {
+            console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
               elem.css({
               'max-height': height,
               'overflow': 'auto'
-            });  
+            });
             } else {
               elem.css({
               'height': height,
               'overflow': 'auto'
             });
             }
-            
+
           }
         }
         else {
