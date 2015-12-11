@@ -33,6 +33,7 @@
             ++insurance;
             $timeout(activate, 200);
             $timeout(activate, 500);
+            $timeout(activate, 750);
           }
         }
         else {
