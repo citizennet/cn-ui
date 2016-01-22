@@ -11,7 +11,10 @@
       scope: {
         cnUploadPath: '=',
         cnFileType: '=',
-        ngModel: '='
+        cnPreviewPath: '=',
+        cnModelValueKey: '=',
+        ngModel: '=',
+        cnData: '='
       },
       controller: Upload,
       controllerAs: 'vm',
@@ -42,7 +45,11 @@
       dfr.promise.then(setFilePath);
 
       var formData = new FormData();
-      formData.append(vm.cnFileType, $files[0]);
+      formData.append("file", $files[0]);
+
+      _.each(vm.cnData, function(value, key) {
+        formData.append(key, value);
+      });
 
       $.ajax({
         url: vm.cnUploadPath,
@@ -56,8 +63,8 @@
     }
 
     function setFilePath(response) {
-      vm.ngModel = response[vm.cnFileType];
-      vm.filePath = $sce.trustAsResourceUrl(response.path);
+      vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
+      vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
     }
   }
 })();
