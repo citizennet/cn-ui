@@ -31,7 +31,7 @@
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
-    }
+    };
   }
 
   Upload.$inject = ['$q', '$http', '$sce'];
