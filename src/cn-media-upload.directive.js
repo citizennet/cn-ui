@@ -34,15 +34,16 @@
     }
   }
 
-  Upload.$inject = ['$q', '$http', '$sce'];
-  function Upload($q, $http, $sce) {
+  Upload.$inject = ['$q', '$http', '$sce', 'socketFactory', 'cnSession'];
+  function Upload($q, $http, $sce, socketFactory, cnSession) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
     function uploadFile($files) {
+      var resolve = vm.cnFileType === 'image' ? setFilePath : processVideoUpload;
       var dfr = $q.defer();
-      dfr.promise.then(setFilePath);
+      dfr.promise.then(resolve);
 
       var formData = new FormData();
       formData.append("file", $files[0]);
@@ -65,6 +66,26 @@
     function setFilePath(response) {
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+    }
+
+    function processVideoUpload(response) {
+      vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+      var socket = socketFactory({
+        ioSocket: io.connect('', {query: "access_token=" + cnSession.getUser().accessToken})
+      });
+
+      socket.on('connect', function() {
+        socket.emit('uploadmedia', {
+          campaignId: '111334',
+          media: response.cn_preview_url
+        });
+      });
+      socket.on('status', function(message) {
+        if (message.media_id_string) {
+          vm.ngModel = message.media_id_string;
+          //socket.disconnect();
+        }
+      });
     }
   }
 })();
