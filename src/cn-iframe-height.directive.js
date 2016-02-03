@@ -27,13 +27,19 @@
         body = getBody();
         $body = $(body);
         if(body && $body.height()) {
-          elem.height($body.height() + 2);
+          elem.height($body.height() + 20);
           $body.find('img').on('load', activate);
+          console.log('insurance:', insurance);
           if(!insurance) {
             ++insurance;
             $timeout(activate, 200);
             $timeout(activate, 500);
-            $timeout(activate, 750);
+            $timeout(activate, 1000);
+            $timeout(activate, 1500);
+            $timeout(activate, 2000);
+            $timeout(activate, 3500);
+            $timeout(activate, 5000);
+            $timeout(activate, 10000);
           }
         }
         else {
