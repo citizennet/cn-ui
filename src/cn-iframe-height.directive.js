@@ -13,7 +13,7 @@
     };
 
     function Link($scope, elem, attrs) {
-      var body, $body;
+      var body, $body, h;
       var insurance;
 
       $scope.$watch(function(){ return attrs.ngSrc; }, function() {
@@ -27,12 +27,11 @@
 
       function activate() {
         body = getBody();
-        $body = $(body);
         if(body) {
-          var h = $body.height() + (insurance ? 20 : 0);
+          $body = angular.element(body);
+          h = $body.height() + (insurance ? 20 : 0);
           elem.height(h);
           $body.find('img').on('load', activate);
-          //console.log('insurance:', insurance);
           if(!insurance) {
             ++insurance;
             $timeout(activate, 200);
@@ -43,7 +42,7 @@
             $timeout(activate, 5000);
             $timeout(activate, 10000);
           }
-          return
+          return;
         }
         $timeout(activate, 100);
       }
