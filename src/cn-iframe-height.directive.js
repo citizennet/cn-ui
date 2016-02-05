@@ -29,9 +29,8 @@
         body = getBody();
         $body = $(body);
         if(body) {
-          var h = $body.height();
-          console.log('h:', h);
-          elem.height(h + 20);
+          var h = $body.height() + (insurance ? 20 : 0);
+          elem.height(h);
           $body.find('img').on('load', activate);
           //console.log('insurance:', insurance);
           if(!insurance) {
