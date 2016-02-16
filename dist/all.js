@@ -561,15 +561,15 @@
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce'];
-  function Upload($q, $http, $sce) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
+  function Upload($q, $http, $sce, cfpLoadingBar) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
     function uploadFile($files) {
       var dfr = $q.defer();
-      dfr.promise.then(setFilePath);
+      dfr.promise.then(setFilePath, cfpLoadingBar.complete);
 
       var formData = new FormData();
       formData.append("file", $files[0]);
@@ -585,11 +585,15 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        success: dfr.resolve
+        success: dfr.resolve,
+        error: dfr.reject
       });
+
+      cfpLoadingBar.start();
     }
 
     function setFilePath(response) {
+      cfpLoadingBar.complete();
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
     }
