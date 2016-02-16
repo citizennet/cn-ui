@@ -28,10 +28,10 @@
       function activate() {
         body = getBody();
         if(body) {
-          $body = angular.element(body);
-          h = $body.height() + (insurance ? 20 : 0);
+          elem.height('');
+          h = body.scrollHeight;
           elem.height(h);
-          $body.find('img').on('load', activate);
+          angular.element(body).find('img').on('load', activate);
           if(!insurance) {
             ++insurance;
             $timeout(activate, 200);
@@ -40,6 +40,7 @@
             $timeout(activate, 1500);
             $timeout(activate, 3500);
             $timeout(activate, 5000);
+            $timeout(activate, 7500);
             $timeout(activate, 10000);
           }
           return;
