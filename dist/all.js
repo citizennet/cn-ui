@@ -576,7 +576,7 @@
       formData.append("file", $files[0]);
 
       _.each(vm.cnData, function(value, key) {
-        formData.append(key, value);
+        value && formData.append(key, value);
       });
 
       $.ajax({
