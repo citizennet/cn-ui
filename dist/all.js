@@ -392,32 +392,39 @@
     };
 
     function Link($scope, elem, attrs) {
-      var body, $body;
-      var insurance = 0;
+      var body, $body, h;
+      var insurance;
 
       $scope.$watch(function(){ return attrs.ngSrc; }, function() {
-        insurance = 0;
-        activate();
+        if(attrs.ngSrc) {
+          insurance = 0;
+          $timeout(activate, 100);
+        }
       });
 
       ////////
 
       function activate() {
         body = getBody();
-        $body = $(body);
-        if(body && $body.height()) {
-          elem.height($body.height() + 2);
-          $body.find('img').on('load', activate);
+        if(body) {
+          elem.height('');
+          h = body.scrollHeight;
+          elem.height(h);
+          angular.element(body).find('img').on('load', activate);
           if(!insurance) {
             ++insurance;
             $timeout(activate, 200);
             $timeout(activate, 500);
-            $timeout(activate, 750);
+            $timeout(activate, 1000);
+            $timeout(activate, 1500);
+            $timeout(activate, 3500);
+            $timeout(activate, 5000);
+            $timeout(activate, 7500);
+            $timeout(activate, 10000);
           }
+          return;
         }
-        else {
-          $timeout(activate, 100);
-        }
+        $timeout(activate, 100);
       }
 
       function getBody() {
@@ -552,25 +559,24 @@
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
-    }
+    };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'socketFactory', 'cnSession'];
-  function Upload($q, $http, $sce, socketFactory, cnSession) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
+  function Upload($q, $http, $sce, cfpLoadingBar) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
     function uploadFile($files) {
-      var resolve = vm.cnFileType === 'image' ? setFilePath : processVideoUpload;
       var dfr = $q.defer();
-      dfr.promise.then(resolve);
+      dfr.promise.then(setFilePath, cfpLoadingBar.complete);
 
       var formData = new FormData();
       formData.append("file", $files[0]);
 
       _.each(vm.cnData, function(value, key) {
-        formData.append(key, value);
+        value && formData.append(key, value);
       });
 
       $.ajax({
@@ -580,33 +586,17 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        success: dfr.resolve
+        success: dfr.resolve,
+        error: dfr.reject
       });
+
+      cfpLoadingBar.start();
     }
 
     function setFilePath(response) {
+      cfpLoadingBar.complete();
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
-    }
-
-    function processVideoUpload(response) {
-      vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
-      var socket = socketFactory({
-        ioSocket: io.connect('', {query: "access_token=" + cnSession.getUser().accessToken})
-      });
-
-      socket.on('connect', function() {
-        socket.emit('uploadmedia', {
-          campaignId: '111334',
-          media: response.cn_preview_url
-        });
-      });
-      socket.on('status', function(message) {
-        if (message.media_id_string) {
-          vm.ngModel = message.media_id_string;
-          //socket.disconnect();
-        }
-      });
     }
   }
 })();
@@ -837,9 +827,6 @@
   function cnResponsiveHeight($window, $timeout) {
     var directive = {
       restrict: 'EA',
-      scope: {
-        breakpoint: '@cnResponsiveBreak'
-      },
       link: linkFunction
     };
 
@@ -851,7 +838,7 @@
             sm: 768,
             md: 992,
             lg: 1200
-          }[$scope.breakpoint] || 0;
+          }[attrs.cnResponsiveBreak] || 0;
 
       w.bind('resize', activate);
       /* give page elements a chance to render before calculation */
@@ -872,7 +859,7 @@
             var bottomOffset = attrs.cnResponsiveHeight || 0;
             var height = w.height() - topOffset - bottomOffset;
             height = height ? height + 'px' : 'auto';
-            console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
             if (_.has(attrs, 'cnSetMaxHeight')) {
               elem.css({
               'max-height': height,
@@ -893,6 +880,132 @@
       }
     }
   }
+})();
+(function() {
+  'use strict';
+  angular
+      .module('cn.ui')
+      .directive('cnSelectOr', cnSelectOr);
+
+  function cnSelectOr() {
+    return {
+      restrict: 'E',
+      template: function(elem, attrs) {
+        console.log('template:', elem, attrs);
+        var tpl = '\
+          <div class="cn-select-or" ng-disabled="vm.disabled">\
+            <p ng-show="vm.selectFrom.length" class="toggle-view">\
+              <a ng-click="vm.toggleView()">\
+                {{vm.view === \'list\' ? vm.toggleText.list : vm.toggleText.new}}\
+              </a>\
+            </p>\
+            <div ng-show="vm.view === \'new\'" ng-transclude/>\
+            <div ng-show="vm.view === \'list\'" class="cn-list">\
+              <table class="table card-flex">\
+                <tr ng-repeat="item in vm.selectFrom"\
+                    selection-model\
+                    selection-model-type="checkbox"\
+                    selection-model-cleanup-strategy="deselect"\
+                    selection-model-selected-items="vm.selected">\
+                  <td class="col-sm-1 text-center">\
+                    <span class="checkbox">\
+                      <input type="checkbox" id="checkbox{{ item.id }}" selection-model-ignore="false"/>\
+                    </span>\
+                  </td>\
+                  <td class="col-sm-11" ng-bind-html="vm.processTemplate(item)"></td>\
+                </tr>\
+              </table>\
+            </div>\
+          </div>\
+        ';
+        console.log('tpl:', tpl);
+        return tpl;
+      },
+      transclude: true,
+      scope: {
+        selectFrom: '=',
+        ngModel: '=',
+        form: '=ffForm',
+        directiveId: '=',
+        toggleText: '=',
+        disabled: '=',
+        itemTemplate: '='
+      },
+      require: 'ngModel',
+      link: Link,
+      controller: SelectOr,
+      controllerAs: 'vm',
+      bindToController: true
+    };
+  }
+
+  function Link($scope, elem, attrs, ctrl) {
+    var vm = $scope.vm;
+
+    $scope.$watch('vm.ngModel', validate, true);
+
+    //////////
+
+    function validate(cur, prev) {
+      if(!angular.equals(cur, prev)) {
+        ctrl.$setDirty();
+
+        if(vm.form.required) {
+          ctrl.$setValidity('tv4-302', !!(cur));
+        }
+      }
+    }
+  }
+
+  SelectOr.$inject = ['$scope', '$sce', '$interpolate'];
+  function SelectOr($scope, $sce, $interpolate) {
+    var vm = this;
+    vm.selected = [];
+    vm.view = 'new';
+    vm.activate = activate;
+    vm.onSelectionChange = onSelectionChange;
+    vm.processTemplate = processTemplate;
+    vm.setValue = setValue;
+    vm.toggleView = toggleView;
+
+    $scope.$watch('vm.selected.length', vm.onSelectionChange);
+
+    vm.activate();
+
+    ///////////
+
+    function activate() {
+      console.log('vm:', vm);
+      vm.form.schema._required = _.clone(vm.form.schema.required);
+    }
+
+    function processTemplate(item) {
+      return $sce.trustAsHtml($interpolate(vm.itemTemplate)(item));
+    }
+
+    function onSelectionChange() {
+      console.log('onSelectionChange:', vm.selected, vm.ngModel);
+      vm.setValue(_.first(vm.selected) || null);
+    }
+
+    function setValue(val) {
+      if(val) {
+        val = vm.form.schema.type === 'object' ? val : val[vm.form.valueProperty || 'value'];
+      }
+      vm.ngModel = val;
+    }
+
+    function toggleView() {
+      console.log('toggleView:', vm.view, vm.form);
+      vm.view = vm.view === 'new' ? 'list' : 'new';
+      if(vm.selected[0]) {
+        vm.selected[0].selected = false;
+        vm.selected.length = 0;
+      }
+    }
+
+  }
+
 })();
 (function() {
   'use strict';

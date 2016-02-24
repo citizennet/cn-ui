@@ -31,25 +31,24 @@
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
-    }
+    };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'socketFactory', 'cnSession'];
-  function Upload($q, $http, $sce, socketFactory, cnSession) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
+  function Upload($q, $http, $sce, cfpLoadingBar) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
     function uploadFile($files) {
-      var resolve = vm.cnFileType === 'image' ? setFilePath : processVideoUpload;
       var dfr = $q.defer();
-      dfr.promise.then(resolve);
+      dfr.promise.then(setFilePath, cfpLoadingBar.complete);
 
       var formData = new FormData();
       formData.append("file", $files[0]);
 
       _.each(vm.cnData, function(value, key) {
-        formData.append(key, value);
+        value && formData.append(key, value);
       });
 
       $.ajax({
@@ -59,33 +58,17 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        success: dfr.resolve
+        success: dfr.resolve,
+        error: dfr.reject
       });
+
+      cfpLoadingBar.start();
     }
 
     function setFilePath(response) {
+      cfpLoadingBar.complete();
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
-    }
-
-    function processVideoUpload(response) {
-      vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
-      var socket = socketFactory({
-        ioSocket: io.connect('', {query: "access_token=" + cnSession.getUser().accessToken})
-      });
-
-      socket.on('connect', function() {
-        socket.emit('uploadmedia', {
-          campaignId: '111334',
-          media: response.cn_preview_url
-        });
-      });
-      socket.on('status', function(message) {
-        if (message.media_id_string) {
-          vm.ngModel = message.media_id_string;
-          //socket.disconnect();
-        }
-      });
     }
   }
 })();

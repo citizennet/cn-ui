@@ -10,9 +10,6 @@
   function cnResponsiveHeight($window, $timeout) {
     var directive = {
       restrict: 'EA',
-      scope: {
-        breakpoint: '@cnResponsiveBreak'
-      },
       link: linkFunction
     };
 
@@ -24,7 +21,7 @@
             sm: 768,
             md: 992,
             lg: 1200
-          }[$scope.breakpoint] || 0;
+          }[attrs.cnResponsiveBreak] || 0;
 
       w.bind('resize', activate);
       /* give page elements a chance to render before calculation */
@@ -45,7 +42,7 @@
             var bottomOffset = attrs.cnResponsiveHeight || 0;
             var height = w.height() - topOffset - bottomOffset;
             height = height ? height + 'px' : 'auto';
-            console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
             if (_.has(attrs, 'cnSetMaxHeight')) {
               elem.css({
               'max-height': height,

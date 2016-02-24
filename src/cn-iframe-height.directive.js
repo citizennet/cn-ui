@@ -13,32 +13,39 @@
     };
 
     function Link($scope, elem, attrs) {
-      var body, $body;
-      var insurance = 0;
+      var body, $body, h;
+      var insurance;
 
       $scope.$watch(function(){ return attrs.ngSrc; }, function() {
-        insurance = 0;
-        activate();
+        if(attrs.ngSrc) {
+          insurance = 0;
+          $timeout(activate, 100);
+        }
       });
 
       ////////
 
       function activate() {
         body = getBody();
-        $body = $(body);
-        if(body && $body.height()) {
-          elem.height($body.height() + 2);
-          $body.find('img').on('load', activate);
+        if(body) {
+          elem.height('');
+          h = body.scrollHeight;
+          elem.height(h);
+          angular.element(body).find('img').on('load', activate);
           if(!insurance) {
             ++insurance;
             $timeout(activate, 200);
             $timeout(activate, 500);
-            $timeout(activate, 750);
+            $timeout(activate, 1000);
+            $timeout(activate, 1500);
+            $timeout(activate, 3500);
+            $timeout(activate, 5000);
+            $timeout(activate, 7500);
+            $timeout(activate, 10000);
           }
+          return;
         }
-        else {
-          $timeout(activate, 100);
-        }
+        $timeout(activate, 100);
       }
 
       function getBody() {
