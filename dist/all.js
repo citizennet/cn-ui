@@ -929,7 +929,8 @@
         directiveId: '=',
         toggleText: '=',
         disabled: '=',
-        itemTemplate: '='
+        itemTemplate: '=',
+        view: '='
       },
       require: 'ngModel',
       link: Link,
@@ -961,7 +962,7 @@
   function SelectOr($scope, $sce, $interpolate) {
     var vm = this;
     vm.selected = [];
-    vm.view = 'new';
+    vm.view = vm.view || 'new';
     vm.activate = activate;
     vm.onSelectionChange = onSelectionChange;
     vm.processTemplate = processTemplate;
