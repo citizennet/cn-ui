@@ -18,7 +18,7 @@
             </p>\
             <div ng-show="vm.view === \'new\'" ng-transclude/>\
             <div ng-show="vm.view === \'list\'" class="cn-list">\
-              <table class="table card-flex">\
+              <table class="list-group table card-flex">\
                 <tr ng-repeat="item in vm.selectFrom"\
                     selection-model\
                     selection-model-type="checkbox"\
