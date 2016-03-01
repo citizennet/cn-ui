@@ -16,9 +16,9 @@
                 {{vm.view === \'list\' ? vm.toggleText.list : vm.toggleText.new}}\
               </a>\
             </p>\
-            <div ng-show="vm.view === \'new\'" ng-transclude/>\
-            <div ng-show="vm.view === \'list\'" class="cn-list">\
-              <table class="table card-flex">\
+            <div ng-show="vm.form.view === \'new\'" ng-transclude/>\
+            <div ng-show="vm.form.view === \'list\'" class="cn-list">\
+              <table class="list-group table card-flex">\
                 <tr ng-repeat="item in vm.selectFrom"\
                     selection-model\
                     selection-model-type="checkbox"\
@@ -78,7 +78,7 @@
   function SelectOr($scope, $sce, $interpolate) {
     var vm = this;
     vm.selected = [];
-    vm.view = 'new';
+    vm.form.view = vm.form.view || 'new';
     vm.activate = activate;
     vm.onSelectionChange = onSelectionChange;
     vm.processTemplate = processTemplate;
@@ -113,8 +113,8 @@
     }
 
     function toggleView() {
-      console.log('toggleView:', vm.view, vm.form);
-      vm.view = vm.view === 'new' ? 'list' : 'new';
+      console.log('toggleView:', vm.form.view, vm.form);
+      vm.form.view = vm.form.view === 'new' ? 'list' : 'new';
       if(vm.selected[0]) {
         vm.selected[0].selected = false;
         vm.selected.length = 0;
