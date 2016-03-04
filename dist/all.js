@@ -573,7 +573,7 @@
       dfr.promise.then(setFilePath, cfpLoadingBar.complete);
 
       var formData = new FormData();
-      formData.append("file", $files[0]);
+      formData.append(vm.cnFileType, $files[0]);
 
       _.each(vm.cnData, function(value, key) {
         value && formData.append(key, value);
