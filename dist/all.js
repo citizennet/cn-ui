@@ -576,7 +576,7 @@
       formData.append(vm.cnFileType, $files[0]);
 
       _.each(vm.cnData, function(value, key) {
-        value && formData.append(key, value);
+        if(value) formData.append(key, value);
       });
 
       $.ajax({
@@ -1036,6 +1036,7 @@
             };
 
             $scope.toggle = function($event) {
+              console.log('toggle:', $scope);
               $event.preventDefault();
               $event.stopImmediatePropagation();
 
