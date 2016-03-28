@@ -27,6 +27,7 @@
             };
 
             $scope.toggle = function($event) {
+              console.log('toggle:', $scope);
               $event.preventDefault();
               $event.stopImmediatePropagation();
 
