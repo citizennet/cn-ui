@@ -35,11 +35,7 @@
         });
 
         vm.$parsers.unshift(parseVal);
-
-        vm.$formatters.unshift(function(val) {
-          vm.$setDirty();
-          return formatVal(val);
-        });
+        vm.$formatters.unshift(formatVal);
       }
 
 
@@ -65,8 +61,6 @@
         else {
           val = _.floor(val, 2) || '';
         }
-        //return elem[0].value = val;
-        vm.$setDirty();
         return /\.\d$/.test(val) ? val + '0' : val;
       }
     }
