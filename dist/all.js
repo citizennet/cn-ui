@@ -341,7 +341,8 @@
   angular.module('cn.ui')
       .directive('cnCurrencyFormat', cnCurrencyFormat);
 
-  function cnCurrencyFormat() {
+  cnCurrencyFormat.$inject = ['$compile'];
+  function cnCurrencyFormat($compile) {
     return {
       require: '?ngModel',
       link: link
@@ -351,16 +352,35 @@
       if(!vm) return;
 
       var format = attrs.cnCurrencyFormat;
+      var placeholder = attrs.cnCurrencyPlaceholder;
 
-      elem.on('blur', function(el) {
-        if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+      activate();
 
-        var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
-        if(overflow) elem[0].value = overflow[1];
-      });
+      //////////
 
-      vm.$parsers.unshift(function(val) {
-        //console.log('parser:', val, elem[0].value, vm);
+      function activate() {
+        if(placeholder) {
+          placeholder = formatVal(placeholder);
+          elem.attr('placeholder', placeholder);
+        }
+
+        elem.on('blur', function(el) {
+          if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+
+          var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
+          if(overflow) elem[0].value = overflow[1];
+        });
+
+        vm.$parsers.unshift(parseVal);
+
+        vm.$formatters.unshift(function(val) {
+          vm.$setDirty();
+          return formatVal(val);
+        });
+      }
+
+
+      function parseVal(val) {
         if(!val) return 0;
         if(format === 'cents') {
           return _.multiply(val, 100);
@@ -369,10 +389,9 @@
           return _.multiply(val, 1000000);
         }
         return parseFloat(val);
-      });
+      }
 
-      vm.$formatters.unshift(function(val) {
-        //console.log('formatter:', vm.$modelValue, val, vm);
+      function formatVal(val) {
         if(!val) val = '';
         else if(format === 'cents') {
           val = _.floor(val / 100, 2) || '';
@@ -386,7 +405,7 @@
         //return elem[0].value = val;
         vm.$setDirty();
         return /\.\d$/.test(val) ? val + '0' : val;
-      });
+      }
     }
   }
 
