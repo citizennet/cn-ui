@@ -341,7 +341,8 @@
   angular.module('cn.ui')
       .directive('cnCurrencyFormat', cnCurrencyFormat);
 
-  function cnCurrencyFormat() {
+  cnCurrencyFormat.$inject = ['$compile'];
+  function cnCurrencyFormat($compile) {
     return {
       require: '?ngModel',
       link: link
@@ -351,16 +352,31 @@
       if(!vm) return;
 
       var format = attrs.cnCurrencyFormat;
+      var placeholder = attrs.cnCurrencyPlaceholder;
 
-      elem.on('blur', function(el) {
-        if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+      activate();
 
-        var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
-        if(overflow) elem[0].value = overflow[1];
-      });
+      //////////
 
-      vm.$parsers.unshift(function(val) {
-        //console.log('parser:', val, elem[0].value, vm);
+      function activate() {
+        if(placeholder) {
+          placeholder = formatVal(placeholder);
+          elem.attr('placeholder', placeholder);
+        }
+
+        elem.on('blur', function(el) {
+          if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+
+          var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
+          if(overflow) elem[0].value = overflow[1];
+        });
+
+        vm.$parsers.unshift(parseVal);
+        vm.$formatters.unshift(formatVal);
+      }
+
+
+      function parseVal(val) {
         if(!val) return 0;
         if(format === 'cents') {
           return _.multiply(val, 100);
@@ -369,10 +385,9 @@
           return _.multiply(val, 1000000);
         }
         return parseFloat(val);
-      });
+      }
 
-      vm.$formatters.unshift(function(val) {
-        //console.log('formatter:', vm.$modelValue, val, vm);
+      function formatVal(val) {
         if(!val) val = '';
         else if(format === 'cents') {
           val = _.floor(val / 100, 2) || '';
@@ -383,10 +398,8 @@
         else {
           val = _.floor(val, 2) || '';
         }
-        //return elem[0].value = val;
-        vm.$setDirty();
         return /\.\d$/.test(val) ? val + '0' : val;
-      });
+      }
     }
   }
 
@@ -1076,22 +1089,30 @@
           restrict: 'E',
           replace: true,
           template: '\
-                  <div class="cn-toggle" ng-class="currentCssState()" ng-click="toggle($event)">\
-                    <i class="icn-toggle" ng-class="currentCssState()"></i>\
+                  <div class="cn-toggle"\
+                       ng-class="currentCssState()"\
+                       ng-click="toggle($event)">\
+                    <i class="icn-toggle"\
+                       ng-class="currentCssState()"></i>\
                   </div>',
+          require: 'ngModel',
           scope: {
-            'enabled': '=',     // property used to determine on / off state
+            'ngModel': '=enabled',     // property used to determine on / off state
             'onValue': '=?',
             'offValue': '=?',
+            'undefinedClass': '=?',
             'onChange': '&'     // callback when toggle changes
           },
-          link: function($scope) {
+          link: function($scope, elem, attrs, ctrl) {
             //console.log('$scope:', $scope.onValue, $scope.offValue);
             $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
             $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
+            $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
 
             $scope.currentCssState = function() {
-              return $scope.enabled == $scope.onValue ? null : 'disabled';
+              if($scope.ngModel == $scope.onValue) return null;
+              if($scope.ngModel == $scope.offValue) return 'disabled';
+              return $scope.undefinedClass;
             };
 
             $scope.toggle = function($event) {
@@ -1100,12 +1121,14 @@
               $event.stopImmediatePropagation();
 
               // Using evil twins to do string to number type conversion comparison
-              if($scope.enabled == $scope.onValue) {
-                $scope.enabled = $scope.offValue;
+              if($scope.ngModel == $scope.onValue) {
+                $scope.ngModel = $scope.offValue;
               }
               else {
-                $scope.enabled = $scope.onValue;
+                $scope.ngModel = $scope.onValue;
               }
+
+              ctrl.$setDirty();
 
               if($scope.onChange) {
                 $scope.onChange();
