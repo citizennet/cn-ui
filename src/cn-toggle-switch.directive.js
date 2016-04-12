@@ -14,16 +14,16 @@
                     <i class="icn-toggle"\
                        ng-class="currentCssState()"></i>\
                   </div>',
-          require: 'ngModel',
+          require: '^ngModel',
           scope: {
-            'ngModel': '=enabled',     // property used to determine on / off state
+            'ngModel': '=',     // property used to determine on / off state
             'onValue': '=?',
             'offValue': '=?',
             'undefinedClass': '=?',
             'onChange': '&'     // callback when toggle changes
           },
           link: function($scope, elem, attrs, ctrl) {
-            //console.log('$scope:', $scope.onValue, $scope.offValue);
+            console.log('$scope:', $scope.ngModel, ctrl);
             $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
             $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
             $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
