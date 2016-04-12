@@ -372,7 +372,11 @@
         });
 
         vm.$parsers.unshift(parseVal);
-        vm.$formatters.unshift(formatVal);
+        vm.$formatters.unshift(function(val) {
+          //console.log('val:', val);
+          vm.$setDirty();
+          return formatVal(val);
+        });
       }
 
 
