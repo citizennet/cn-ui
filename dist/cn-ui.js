@@ -1207,7 +1207,7 @@
     return {
       restrict: 'E',
       scope: {
-        callback: '@'
+        callback: '&'
       },
       controller: xlsToJsonController,
       controllerAs: 'vm',
@@ -1240,7 +1240,7 @@
           return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
         });
 
-        vm.callback(json);
+        vm.callback({ jsonData: json });
       };
       reader.readAsBinaryString(f);
     }
