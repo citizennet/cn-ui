@@ -311,7 +311,7 @@
         $scope.onChange({ $value: newVal });
       }
       $scope.$parent.$parent.ngModel.$setValidity('schemaForm', true);
-      $scope.$parent.$parent.ngMode.$setValidity('tv4-302', !_.isEmpty($scope.vm.ngModel));
+      $scope.$parent.$parent.ngModel.$setValidity('tv4-302', !_.isEmpty($scope.vm.ngModel));
       if (!angular.equals(newVal, prevVal)) {
         $scope.$parent.$parent.ngModel.$setDirty();
       }
@@ -972,22 +972,22 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': 'auto'
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': 'auto'
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            height = height ? height + 'px' : 'auto';
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': 'auto'
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': 'auto'
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
