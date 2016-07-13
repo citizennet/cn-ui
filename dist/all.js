@@ -292,6 +292,7 @@
         cnUploadPath: '=',
         ngModel: '='
       },
+      link: Link,
       controller: Upload,
       controllerAs: 'vm',
       bindToController: true,
@@ -302,6 +303,19 @@
         </file-upload>\
       '
     };
+  }
+
+  function Link($scope, elem, attrs, ctrl) {
+    $scope.$watch('vm.ngModel', function (newVal, prevVal) {
+      if ($scope.onChange) {
+        $scope.onChange({ $value: newVal });
+      }
+      $scope.$parent.$parent.ngModel.$setValidity('schemaForm', true);
+      $scope.$parent.$parent.ngModel.$setValidity('tv4-302', !_.isEmpty($scope.vm.ngModel));
+      if (!angular.equals(newVal, prevVal)) {
+        $scope.$parent.$parent.ngModel.$setDirty();
+      }
+    });
   }
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
@@ -958,22 +972,22 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': 'auto'
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': 'auto'
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            height = height ? height + 'px' : 'auto';
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': 'auto'
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': 'auto'
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
@@ -1207,7 +1221,7 @@
     return {
       restrict: 'E',
       scope: {
-        ngModel: '='
+        callback: '&'
       },
       controller: xlsToJsonController,
       controllerAs: 'vm',
@@ -1236,9 +1250,11 @@
 
         var workbook = XLSX.read(data, { type: 'binary' });
 
-        vm.ngModel = workbook.SheetNames.map(function (sheetName) {
+        var json = workbook.SheetNames.map(function (sheetName) {
           return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
         });
+
+        vm.callback({ jsonData: json });
       };
       reader.readAsBinaryString(f);
     }

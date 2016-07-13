@@ -9,7 +9,7 @@
     return {
       restrict: 'E',
       scope: {
-        ngModel: '='
+        callback: '&'
       },
       controller: xlsToJsonController,
       controllerAs: 'vm',
@@ -38,9 +38,11 @@
 
         var workbook = XLSX.read(data, {type: 'binary'});
 
-        vm.ngModel = workbook.SheetNames.map(sheetName =>
+        var json = workbook.SheetNames.map(sheetName =>
             XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
         );
+
+        vm.callback({jsonData: json});
       };
       reader.readAsBinaryString(f);
     }
