@@ -35,19 +35,15 @@ gulp.task('scripts', function() {
 
 gulp.task('deps-min', function() {
   return gulp.src(['dist/cn-ui.min.js',
-                   'bower_components/ng-file-upload/angular-file-upload.min.js',
-                   'bower_components/js-xlsx/dist/xlsx.core.min.js'])
+                   'bower_components/ng-file-upload/angular-file-upload.min.js'])
       .pipe(concat('all.min.js'))
       .pipe(gulp.dest('dist'));
 });
 
 gulp.task('deps', function() {
   return gulp.src(['dist/cn-ui.js',
-                   'bower_components/ng-file-upload/angular-file-upload.js',
-                   'bower_components/js-xlsx/dist/cpexcel.js',
-                   'bower_components/js-xlsx/dist/jszip.js',
-                   'bower_components/js-xlsx/dist/ods.js',
-                   'bower_components/js-xlsx/dist/xlsx.js'])
+                   'bower_components/ng-file-upload/angular-file-upload.js'
+      ])
       .pipe(concat('all.js'))
       .pipe(gulp.dest('dist'));
 });
