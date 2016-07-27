@@ -472,6 +472,48 @@
 (function () {
   'use strict';
 
+  angular.module('cn.ui').directive('cnMastHead', cnMastHead);
+
+  function cnMastHead() {
+    return {
+      restrict: 'E',
+      template: '\n        <div class="cn-heading cn-mast-head">\n          <div class="cn-mast-head-inner">\n            <div class="cn-mast-head-main">\n              <div class="cn-heading-title">\n                <a ng-if="vm.config.backState"\n                   class="cn-heading-back"\n                   ui-sref="{{vm.config.backState}}">\n                  <i ng-show="vm.config.backState" class="icn-back"></i>\n                </a>\n                <h1 ng-hide="vm.config.dropdown">\n                  {{vm.config.title || vm.config.getTitle()}}\n                </h1>\n                <h1 ng-show="vm.config.dropdown" data-toggle="dropdown">\n                  <a>\n                    {{vm.config.getTitle()}}\n                    <i ng-show="vm.config.dropdown" class="icn-caret"></i>\n                  </a>\n                </h1>\n                <ul ng-if="vm.config.dropdown"\n                    class="dropdown-menu row"\n                    ng-class="vm.config.dropdown.style"\n                    style="width: {{vm.config.dropdown.lists.length * 250}}px"\n                    role="menu">\n                  <div ng-repeat="list in vm.config.dropdown.lists"\n                       style="width: 250px">\n                    <li class="{{list.style}}">\n                      <div class="input-group">\n                        <input ng-model="list.filter"\n                               class="form-control"\n                               placeholder="{{list.name}}"/>\n                        <span class="input-group-addon">\n                          <i class="icn-search"></i>\n                        </span>\n                      </div>\n                    </li>\n                    <li class="divider"></li>\n                    <li ng-repeat="item in list.items | filter:list.filter"\n                        class="{{list.style}} {{item.style}}">\n                      <a ng-show="item.name"\n                         ng-click="list.handler(item)"\n                         ng-class="{\'selected\': list.isSelected(item)}">{{item.name}}</a>\n                    </li>\n                  </div>\n                </ul>\n              </div>\n  \n              <div ng-show="vm.config.options"\n                   class="pull-right btn-options">\n                <span ng-repeat="btn in vm.config.options">\n                  <a ng-if="btn.state"\n                     class="btn btn-sm btn-transparent"\n                     ui-sref="{{btn.state}}"\n                     title="{{btn.title}}">\n                    <i class="{{btn.icon}}"/>\n                  </a>\n                  <a ng-if="btn.href"\n                     class="btn btn-sm btn-transparent"\n                     ng-href="{{btn.href}}"\n                     title="{{btn.title}}">\n                    <i class="{{btn.icon}}"/>\n                  </a>\n                </span>\n              </div>\n            </div>\n          </div>\n          <div class="cn-mast-head-sub">\n            <div class="cn-mast-head-inner">\n              <ul class="tabs" ng-if="vm.config.tabs && vm.config.tabs.length">\n                <li ng-repeat="tab in vm.config.tabs"\n                    ng-class="{active: tab.active}"\n                    class="{{tab.style}}">\n                  <a ng-if="tab.state || tab.getState"\n                     ui-sref="{{tab.state}}({{tab.params}})">\n                    <i ng-show="tab.active" class="{{tab.icon}}"/>\n                    {{tab.name}}\n                  </a>\n                  <span ng-if="!tab.state && !tab.getState">\n                    {{tab.name || tab.getName()}}\n                  </span>\n                </li>\n              </ul>\n            </div>\n          </div>\n          <div class="cn-mast-actions">\n            <div class="cn-mast-head-inner">\n              <div class="cn-actions"\n                   ng-if="vm.floater"\n                   ng-mouseenter="vm.toggleFloaters(false)"\n                   ng-mouseleave="vm.toggleFloaters(true)">\n                <floating-action-button\n                  ng-mouseenter="vm.floater.showTitle = true"\n                  ng-mouseleave="vm.floater.showTitle = false">\n                  <a class="btn {{vm.hideFloaters ? \'\' : vm.floater.style}}"\n                     ui-sref="{{vm.floater.state || vm.floater.getState()}}(\n                       {{vm.floater.params || vm.floater.getParams()}}\n                     )">\n                     <i ng-show="vm.floater.icon && !vm.hideFloaters"\n                        class="{{vm.floater.icon}}"></i>\n                     <span ng-show="vm.floater.text && vm.hideFloaters" class="text">\n                       {{vm.floater.text}}\n                     </span>\n                     <span ng-hide="vm.floater.icon || vm.floater.text || vm.hideFloaters">\n                       {{vm.floater.symbol || \'+\'}}\n                     </span>\n                     <span ng-show="vm.hideFloaters">+</span>\n                  </a>\n                  <span class="fab-title"\n                        ng-show="vm.floater.showTitle && vm.floater.title">\n                    {{vm.floater.title}}\n                  </span>\n                </floating-action-button>\n                <div class="cn-floaters" style="height: {{vm.floatersHeight}}">\n                  <div class="cn-floaters-inner">\n                    <floating-action-button\n                      ng-repeat="btn in vm.floaters"\n                      ng-mouseenter="btn.showTitle = true"\n                      ng-mouseleave="btn.showTitle = false">\n                      <a ng-show="btn.state || btn.getState"\n                         class="btn {{btn.style}}"\n                         ui-sref="{{btn.state || btn.getState()}}(\n                           {{btn.params || btn.getParams()}}\n                         )">\n                         <i ng-show="btn.icon" class="{{btn.icon}}"></i>\n                         <span ng-show="btn.text" class="text">{{btn.text}}</span>\n                         <span ng-show="btn.symbol">{{btn.symbol}}</span>\n                       </a>\n                      <span class="fab-title"\n                            ng-show="btn.showTitle && btn.title">\n                        {{btn.title}}\n                      </span>\n                    </floating-action-button>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>',
+      scope: {
+        config: '='
+      },
+      link: function link(scope, elem) {
+        console.log('scope:', scope);
+        scope.vm.elem = elem;
+      },
+      controller: MastHead,
+      controllerAs: 'vm',
+      bindToController: true
+    };
+  }
+
+  function MastHead() {
+    var vm = this;
+    vm.floater = _.first(vm.config.actions);
+    vm.floaters = _.rest(vm.config.actions);
+    vm.floatersHeight = 0;
+    vm.hideFloaters = true;
+    vm.toggleFloaters = toggleFloaters;
+
+    console.log('vm:', vm);
+
+    ////////
+
+    function toggleFloaters(hide) {
+      vm.floatersHeight = hide ? 0 : vm.elem.find('.cn-floaters-inner').outerHeight() + 'px';
+      vm.hideFloaters = hide;
+    }
+  }
+})();
+'use strict';
+
+(function () {
+  'use strict';
+
   angular.module('cn.ui').directive('cnIframeHeight', cnIframeHeight);
 
   cnIframeHeight.$inject = ['$timeout'];
