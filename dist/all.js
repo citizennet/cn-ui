@@ -299,6 +299,7 @@
       template: '\
         <file-upload class="col-sm-6"\
                      btn-text="Upload CSV"\
+                     accept=".csv"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
@@ -437,13 +438,14 @@
         iconStyle: '@',
         callback: '&onFileSelect',
         inputId: '@',
-        btnText: '@'
+        btnText: '@',
+        accept: '@'
       },
       template: '<div class="file-wrapper">\
                        <button class="btn btn-file {{btnStyle}}">\
                          <i ng-if="iconStyle" class="{{iconStyle}}"></i> {{btnText}}\
                        </button>\
-                       <input type="file" id="{{inputId}}" class="form-control" \
+                       <input type="file" id="{{inputId}}" class="form-control" accept="{{accept}}"\
                               ng-file-select="onFileSelect($files)"/>\
                      </div>',
       compile: function compile(elem, attrs) {
@@ -974,22 +976,22 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': 'auto'
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': 'auto'
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            height = height ? height + 'px' : 'auto';
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': 'auto'
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': 'auto'
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
