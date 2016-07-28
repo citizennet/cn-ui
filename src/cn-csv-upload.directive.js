@@ -19,6 +19,7 @@
       template: '\
         <file-upload class="col-sm-6"\
                      btn-text="Upload CSV"\
+                     accept=".csv"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
