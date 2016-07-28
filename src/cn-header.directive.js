@@ -19,11 +19,11 @@
                   <i ng-show="vm.config.backState" class="icn-back"></i>
                 </a>
                 <h1 ng-hide="vm.config.dropdown">
-                  {{vm.config.title || vm.config.getTitle()}}
+                  {{vm.config.title}}
                 </h1>
                 <h1 ng-show="vm.config.dropdown" data-toggle="dropdown">
                   <a>
-                    {{vm.config.getTitle()}}
+                    {{vm.config.title}}
                     <i ng-show="vm.config.dropdown" class="icn-caret"></i>
                   </a>
                 </h1>
@@ -80,13 +80,13 @@
                 <li ng-repeat="tab in vm.config.tabs"
                     ng-class="{active: tab.active}"
                     class="{{tab.style}}">
-                  <a ng-if="tab.state || tab.getState"
-                     ui-sref="{{tab.state}}({{tab.params}})">
+                  <a ng-if="tab.state"
+                     ui-sref="{{tab.state}}">
                     <i ng-show="tab.active" class="{{tab.icon}}"/>
                     {{tab.name}}
                   </a>
-                  <span ng-if="!tab.state && !tab.getState">
-                    {{tab.name || tab.getName()}}
+                  <span ng-if="!tab.state">
+                    {{tab.name}}
                   </span>
                 </li>
               </ul>
@@ -102,9 +102,7 @@
                   ng-mouseenter="vm.floater.showTitle = true"
                   ng-mouseleave="vm.floater.showTitle = false">
                   <a class="btn {{vm.hideFloaters ? '' : vm.floater.style}}"
-                     ui-sref="{{vm.floater.state || vm.floater.getState()}}(
-                       {{vm.floater.params || vm.floater.getParams()}}
-                     )">
+                     ui-sref="{{vm.floater.state}}">
                      <i ng-show="vm.floater.icon && !vm.hideFloaters"
                         class="{{vm.floater.icon}}"></i>
                      <span ng-show="vm.floater.text && vm.hideFloaters" class="text">
@@ -126,11 +124,9 @@
                       ng-repeat="btn in vm.floaters"
                       ng-mouseenter="btn.showTitle = true"
                       ng-mouseleave="btn.showTitle = false">
-                      <a ng-show="btn.state || btn.getState"
+                      <a ng-show="btn.state"
                          class="btn {{btn.style}}"
-                         ui-sref="{{btn.state || btn.getState()}}(
-                           {{btn.params || btn.getParams()}}
-                         )">
+                         ui-sref="{{btn.state}}">
                          <i ng-show="btn.icon" class="{{btn.icon}}"></i>
                          <span ng-show="btn.text" class="text">{{btn.text}}</span>
                          <span ng-show="btn.symbol">{{btn.symbol}}</span>
