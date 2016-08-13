@@ -20,6 +20,7 @@
             'onValue': '=?',
             'offValue': '=?',
             'undefinedClass': '=?',
+            'readOnly': '=',
             'onChange': '&'     // callback when toggle changes
           },
           link: function($scope, elem, attrs, ctrl) {
@@ -29,9 +30,12 @@
             $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
 
             $scope.currentCssState = function() {
-              if($scope.ngModel == $scope.onValue) return null;
-              if($scope.ngModel == $scope.offValue) return 'disabled';
-              return $scope.undefinedClass;
+              let classes = [];
+              if($scope.readOnly) classes.push('readonly');
+              if($scope.ngModel == $scope.onValue) { }
+              else if($scope.ngModel == $scope.offValue) classes.push('disabled');
+              else classes.push($scope.undefinedClass);
+              return classes.join(' ');
             };
 
             $scope.toggle = function($event) {
