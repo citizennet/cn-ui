@@ -400,7 +400,7 @@
       }
 
       function parseVal(val) {
-        if (!val) return 0;
+        if (!parseInt(val)) return undefined;
         if (format === 'cents') {
           return _.multiply(val, 100);
         }
@@ -1188,6 +1188,7 @@
         'onValue': '=?',
         'offValue': '=?',
         'undefinedClass': '=?',
+        'readOnly': '=',
         'onChange': '&' // callback when toggle changes
       },
       link: function link($scope, elem, attrs, ctrl) {
@@ -1197,9 +1198,10 @@
         $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
 
         $scope.currentCssState = function () {
-          if ($scope.ngModel == $scope.onValue) return null;
-          if ($scope.ngModel == $scope.offValue) return 'disabled';
-          return $scope.undefinedClass;
+          var classes = [];
+          if ($scope.readOnly) classes.push('readonly');
+          if ($scope.ngModel == $scope.onValue) {} else if ($scope.ngModel == $scope.offValue) classes.push('disabled');else classes.push($scope.undefinedClass);
+          return classes.join(' ');
         };
 
         $scope.toggle = function ($event) {
