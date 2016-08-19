@@ -400,7 +400,7 @@
       }
 
       function parseVal(val) {
-        if (!parseInt(val)) return undefined;
+        if (!val) return 0;
         if (format === 'cents') {
           return _.multiply(val, 100);
         }
