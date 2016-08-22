@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  angular.module('cn.ui', []);
+  angular.module('cn.ui', ['angularFileUpload']);
 })();
 'use strict';
 
@@ -469,6 +469,7 @@
     };
   });
 })();
+"use strict";
 'use strict';
 
 (function () {
