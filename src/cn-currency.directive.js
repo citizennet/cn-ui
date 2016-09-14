@@ -44,7 +44,7 @@
 
 
       function parseVal(val) {
-        if(!val) return 0;
+        if(!val) return val;
         if(format === 'cents') {
           return _.multiply(val, 100);
         }
