@@ -1020,17 +1020,18 @@
           } else {
               var bottomOffset = attrs.cnResponsiveHeight || 0;
               var height = w.height() - topOffset - bottomOffset;
+              var overflow = attrs.cnResponsiveOverflow || 'auto';
               height = height ? height + 'px' : 'auto';
               //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
               if (_.has(attrs, 'cnSetMaxHeight')) {
                 elem.css({
                   'max-height': height,
-                  'overflow': 'auto'
+                  'overflow': overflow
                 });
               } else {
                 elem.css({
                   'height': height,
-                  'overflow': 'auto'
+                  'overflow': overflow
                 });
               }
             }
