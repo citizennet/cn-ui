@@ -1177,14 +1177,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   'use strict';
 
   var CnShelf = function () {
-    CnShelf.$inject = ['$element'];
-    function CnShelf($element) {
+    CnShelf.$inject = ['$element', '$timeout'];
+    function CnShelf($element, $timeout) {
       'ngInject';
 
       _classCallCheck(this, CnShelf);
 
       console.log('constructor::::', $element, this);
       this.$element = $element;
+      this.$timeout = $timeout;
     }
 
     _createClass(CnShelf, [{
@@ -1205,10 +1206,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'toggleShow',
       value: function toggleShow() {
+        var _this = this;
+
         if (this.show) {
-          this.$element.removeClass(this.hideClass).addClass(this.showClass);
+          this.$timeout(function () {
+            _this.$element.removeClass(_this.hideClass).addClass(_this.showClass);
+          }, this.showDelay || 0);
         } else {
-          this.$element.removeClass(this.showClass).addClass(this.hideClass);
+          this.$timeout(function () {
+            _this.$element.removeClass(_this.showClass).addClass(_this.hideClass);
+          }, this.hideDelay || 0);
         }
       }
     }]);
@@ -1222,7 +1229,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     bindings: {
       show: '<',
       showClass: '@',
-      hideClass: '@'
+      hideClass: '@',
+      showDelay: '<',
+      hideDelay: '<'
     }
   };
 

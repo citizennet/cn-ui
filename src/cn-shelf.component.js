@@ -2,10 +2,11 @@
   'use strict';
 
   class CnShelf {
-    constructor($element) {
+    constructor($element, $timeout) {
       'ngInject';
       console.log('constructor::::', $element, this);
       this.$element = $element;
+      this.$timeout = $timeout;
     }
     $onInit() {
       this.$element.addClass('animated fast animated-width');
@@ -20,10 +21,14 @@
     }
     toggleShow() {
       if(this.show) {
-        this.$element.removeClass(this.hideClass).addClass(this.showClass);
+        this.$timeout(() => {
+          this.$element.removeClass(this.hideClass).addClass(this.showClass);
+        }, this.showDelay || 0);
       }
       else {
-        this.$element.removeClass(this.showClass).addClass(this.hideClass);
+        this.$timeout(() => {
+          this.$element.removeClass(this.showClass).addClass(this.hideClass);
+        }, this.hideDelay || 0);
       }
     }
   }
@@ -34,7 +39,9 @@
     bindings: {
       show: '<',
       showClass: '@',
-      hideClass: '@'
+      hideClass: '@',
+      showDelay: '<',
+      hideDelay: '<'
     }
   };
 
