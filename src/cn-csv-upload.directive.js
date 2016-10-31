@@ -41,15 +41,15 @@
       });
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
-  function Upload($q, $http, $sce, cfpLoadingBar) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$rootScope', 'EVENTS'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $rootScope, EVENTS) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
     function uploadFile($files) {
       var dfr = $q.defer();
-      dfr.promise.then(setModelValue, cfpLoadingBar.complete);
+      dfr.promise.then(setModelValue, setError);
 
       var formData = new FormData();
       formData.append('csv', $files[0]);
@@ -71,6 +71,17 @@
     function setModelValue(response) {
       cfpLoadingBar.complete();
       vm.ngModel = response;
+    }
+
+    function setError(rawResp) {
+      var response = JSON.parse(rawResp.responseText);
+
+      $rootScope.$broadcast(EVENTS.httpError, {
+        status: response.status,
+        errors: [{data: response.error}]
+      });
+
+      cfpLoadingBar.complete();
     }
   }
 })();
