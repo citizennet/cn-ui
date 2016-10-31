@@ -819,7 +819,7 @@
 
           if (paging.skip !== 1) {
             pages.push({
-              label: '←',
+              label: '\u2190',
               skip: paging.skip - 1
             });
           }
@@ -854,7 +854,7 @@
 
           if (paging.skip !== paging.last) {
             pages.push({
-              label: '→',
+              label: '\u2192',
               skip: paging.skip + 1
             });
           }
@@ -1018,23 +1018,23 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              var overflow = attrs.cnResponsiveOverflow || 'auto';
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': overflow
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': overflow
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            var overflow = attrs.cnResponsiveOverflow || 'auto';
+            height = height ? height + 'px' : 'auto';
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': overflow
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': overflow
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
@@ -1312,7 +1312,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       },
       link: function link($scope, elem) {
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '…' : ogText,
+            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
