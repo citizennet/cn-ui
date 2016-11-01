@@ -5,13 +5,14 @@
   const gulp = require('gulp');
 
   // Include Our Plugins
-  const jshint = require('gulp-jshint');
+  const babel = require('gulp-babel');
   const concat = require('gulp-concat');
-  const uglify = require('gulp-uglify');
+  const jshint = require('gulp-jshint');
+  const ngAnnotate = require('gulp-ng-annotate');
   const rename = require('gulp-rename');
   const runSequence = require('run-sequence');
   const sourcemaps = require('gulp-sourcemaps');
-  const babel = require('gulp-babel');
+  const uglify = require('gulp-uglify');
 
   // Lint Task
   gulp.task('lint', function() {
@@ -32,6 +33,7 @@
         .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(concat('cn-ui.js'))
+        .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest('dist'))
         .pipe(rename('cn-ui.min.js'))
         .pipe(uglify())

@@ -1180,6 +1180,76 @@
 })();
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(function () {
+  'use strict';
+
+  var CnShelf = function () {
+    CnShelf.$inject = ['$element', '$timeout'];
+    function CnShelf($element, $timeout) {
+      'ngInject';
+
+      _classCallCheck(this, CnShelf);
+
+      console.log('constructor::::', $element, this);
+      this.$element = $element;
+      this.$timeout = $timeout;
+    }
+
+    _createClass(CnShelf, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.$element.addClass('animated fast animated-width');
+        this.toggleShow();
+      }
+    }, {
+      key: '$onChanges',
+      value: function $onChanges(changes) {
+        console.log('changes:::', changes, this.show);
+        if (changes.show) {
+          //this.show = changes.show.currentValue;
+          this.toggleShow();
+        }
+      }
+    }, {
+      key: 'toggleShow',
+      value: function toggleShow() {
+        var _this = this;
+
+        if (this.show) {
+          this.$timeout(function () {
+            _this.$element.removeClass(_this.hideClass).addClass(_this.showClass);
+          }, this.showDelay || 0);
+        } else {
+          this.$timeout(function () {
+            _this.$element.removeClass(_this.showClass).addClass(_this.hideClass);
+          }, this.hideDelay || 0);
+        }
+      }
+    }]);
+
+    return CnShelf;
+  }();
+
+  var cnShelf = {
+    controller: CnShelf,
+    controllerAs: 'shelf',
+    bindings: {
+      show: '<',
+      showClass: '@',
+      hideClass: '@',
+      showDelay: '<',
+      hideDelay: '<'
+    }
+  };
+
+  angular.module('cn.ui').component('cnShelf', cnShelf);
+})();
+'use strict';
+
 (function () {
   'use strict';
 
