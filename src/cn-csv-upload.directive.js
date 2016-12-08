@@ -31,7 +31,9 @@
         if($scope.onChange) {
           $scope.onChange({$value: newVal});
         }
-        $scope.$parent.$parent.ngModel.$setValidity('schemaForm', true);
+        if ($scope.$parent.$parent.ngModel) {
+          $scope.$parent.$parent.ngModel.$setValidity('schemaForm', true);
+        }
         if($scope.$parent.$parent.form.required){
           $scope.$parent.$parent.ngModel.$setValidity('tv4-302', !_.isEmpty($scope.vm.ngModel));
         }
