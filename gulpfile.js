@@ -44,7 +44,8 @@
   gulp.task('deps-min', function() {
     return gulp
         .src(['dist/cn-ui.min.js',
-          'bower_components/ng-file-upload/angular-file-upload.min.js'])
+          'bower_components/ng-file-upload/angular-file-upload.min.js',
+          'bower_components/angularjs-toaster/toaster.min.js'])
         .pipe(concat('all.min.js'))
         .pipe(gulp.dest('dist'));
   });
@@ -52,7 +53,8 @@
   gulp.task('deps', function() {
     return gulp
         .src(['dist/cn-ui.js',
-          'bower_components/ng-file-upload/angular-file-upload.js'
+          'bower_components/ng-file-upload/angular-file-upload.js',
+          'bower_components/angularjs-toaster/toaster.js'
         ])
         .pipe(concat('all.js'))
         .pipe(gulp.dest('dist'));
