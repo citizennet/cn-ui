@@ -1271,7 +1271,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
     $rootScope.$on("citizenNet:toastEvent", function (event, options) {
       if (_.isObject(options)) {
-        options.directiveData.type = mapType(options.directiveData.type);
+        options.directiveData.icon = mapType(options.directiveData.type);
         toaster.pop(_extends({}, defaults, options));
       } else {
         toaster.pop(_extends({}, defaults, { directiveData: { body: options } }));
@@ -1296,11 +1296,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", [function () {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class="directiveData.type || \'icn-info\'"></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n                    </div>\n                  </div>\n                  '
+      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class="directiveData.icon || \'icn-info\'"></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n                    </div>\n                  </div>\n                  '
     };
   }]).directive("actionToast", [function () {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class=\'directiveData.type || "icn-info"\'></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span>{{directiveData.body}}</span>\n                    </div>\n                    <div class=\'col-sm-2 btn-options\'>\n                      <span ng-repeat=\'action in directiveData.actions\'>\n                        <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n                      </span>\n                    </div>\n                  </div>\n                  '
+      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span>{{directiveData.body}}</span>\n                    </div>\n                    <div class=\'col-sm-2 btn-options\'>\n                      <span ng-repeat=\'action in directiveData.actions\'>\n                        <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n                      </span>\n                    </div>\n                  </div>\n                  '
     };
   }]);
 })();

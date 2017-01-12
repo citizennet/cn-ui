@@ -15,7 +15,7 @@
 
     $rootScope.$on("citizenNet:toastEvent", function(event, options) {
       if (_.isObject(options)) {
-        options.directiveData.type = mapType(options.directiveData.type);
+        options.directiveData.icon = mapType(options.directiveData.type);
         toaster.pop({ ...defaults, ...options });
       } else {
         toaster.pop({ ...defaults, directiveData: { body: options } });
@@ -40,7 +40,7 @@
         template: `
                   <div class='row'>
                     <div class='col-sm-1'>
-                      <i ng-class="directiveData.type || 'icn-info'"></i>
+                      <i ng-class="directiveData.icon || 'icn-info'"></i>
                     </div>
                     <div class='col-sm-9'>
                       <span ng-bind-html='directiveData.body'>{{directiveData.body}}</span>
@@ -54,7 +54,7 @@
         template: `
                   <div class='row'>
                     <div class='col-sm-1'>
-                      <i ng-class='directiveData.type || "icn-info"'></i>
+                      <i ng-class='directiveData.icon || "icn-info"'></i>
                     </div>
                     <div class='col-sm-9'>
                       <span>{{directiveData.body}}</span>
