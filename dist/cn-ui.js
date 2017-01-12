@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  angular.module('cn.ui', ['angularFileUpload']);
+  angular.module('cn.ui', ['angularFileUpload', 'toaster', 'ngAnimate']);
 })();
 'use strict';
 
@@ -1249,6 +1249,64 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   };
 
   angular.module('cn.ui').component('cnShelf', cnShelf);
+})();
+'use strict';
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+(function () {
+  'use strict';
+
+  toastController.$inject = ['$rootScope', 'toaster'];
+
+  function toastController($rootScope, toaster) {
+    var defaults = {
+      timeout: 5000,
+      toasterId: 'simple',
+      body: 'simple-toast',
+      bodyOutputType: 'directive',
+      tapToDismiss: false,
+      closeHtml: '<a>Dismiss</a>'
+    };
+
+    $rootScope.$on("citizenNet:toastEvent", function (event, options) {
+      if (_.isObject(options)) {
+        options.directiveData.type = mapType(options.directiveData.type);
+        toaster.pop(_extends({}, defaults, options));
+      } else {
+        toaster.pop(_extends({}, defaults, { directiveData: { body: options } }));
+      }
+    });
+
+    function mapType(type) {
+      switch (type) {
+        case "success":
+          return "icn-thumbsup";
+        case "warning":
+          return "icn-error";
+        case "danger":
+          return "icn-error";
+        case "error":
+          return "icn-error";
+        default:
+          return "icn-info";
+      }
+    }
+  }
+
+  var simpleToast = function simpleToast() {
+    return {
+      template: '\n      <div class=\'row\'>\n        <div class=\'col-sm-1\'>\n          <i ng-class="directiveData.type || \'icn-info\'"></i>\n        </div>\n        <div class=\'col-sm-9\'>\n          <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  var actionToast = function actionToast() {
+    return {
+      template: '\n      <div class=\'row\'>\n        <div class=\'col-sm-1\'>\n          <i ng-class=\'directiveData.type || "icn-info"\'></i>\n        </div>\n        <div class=\'col-sm-9\'>\n          <span>{{directiveData.body}}</span>\n        </div>\n        <div class=\'col-sm-2 btn-options\'>\n          <span ng-repeat=\'action in directiveData.actions\'>\n            <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n          </span>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", simpleToast).directive("actionToast", actionToast);
 })();
 'use strict';
 
