@@ -18,7 +18,7 @@
         options.directiveData.type = mapType(options.directiveData.type);
         toaster.pop({ ...defaults, ...options });
       } else {
-         toaster.pop({ ...defaults, directiveData: { body: options } });
+        toaster.pop({ ...defaults, directiveData: { body: options } });
       }
     });
 
