@@ -1294,15 +1294,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     }
   }
 
-  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", [function () {
+  var simpleToast = function simpleToast() {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class="directiveData.icon || \'icn-info\'"></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n                    </div>\n                  </div>\n                  '
+      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class="padding-right-20">\n          <i ng-class="directiveData.icon || \'icn-info\'"></i>\n        </div>\n        <div class="padding-right-20 flex-1">\n          <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n        </div>\n      </div>\n    '
     };
-  }]).directive("actionToast", [function () {
+  };
+
+  var actionToast = function actionToast() {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span>{{directiveData.body}}</span>\n                    </div>\n                    <div class=\'col-sm-2 btn-options\'>\n                      <span ng-repeat=\'action in directiveData.actions\'>\n                        <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n                      </span>\n                    </div>\n                  </div>\n                  '
+      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class=\'padding-right-20\'>\n          <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n        </div>\n        <div class=\'padding-right-20 flex-1\'>\n          <span>{{directiveData.body}}</span>\n        </div>\n        <div class=\'btn-options\'>\n          <span ng-repeat=\'action in directiveData.actions\'>\n            <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n          </span>\n        </div>\n      </div>\n    '
     };
-  }]);
+  };
+
+  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", simpleToast).directive("actionToast", actionToast);
 })();
 'use strict';
 

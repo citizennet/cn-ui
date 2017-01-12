@@ -33,39 +33,40 @@
     }
   }
 
-  angular.module('cn.ui')
+  const simpleToast = () => ({
+    template: `
+      <div class='flex-box align-items-center'>
+        <div class="padding-right-20">
+          <i ng-class="directiveData.icon || 'icn-info'"></i>
+        </div>
+        <div class="padding-right-20 flex-1">
+          <span ng-bind-html='directiveData.body'>{{directiveData.body}}</span>
+        </div>
+      </div>
+    `
+  });
+
+  const actionToast = () => ({
+    template: `
+      <div class='flex-box align-items-center'>
+        <div class='padding-right-20'>
+          <i ng-class='directiveData.icon || "icn-info"'></i>
+        </div>
+        <div class='padding-right-20 flex-1'>
+          <span>{{directiveData.body}}</span>
+        </div>
+        <div class='btn-options'>
+          <span ng-repeat='action in directiveData.actions'>
+            <a class='btn btn-primary' ng-click='action.click()'>{{action.text}}</a>
+          </span>
+        </div>
+      </div>
+    `
+  });
+
+  angular
+    .module('cn.ui')
     .controller('toastController', toastController) 
-    .directive("simpleToast", [function() {
-      return {
-        template: `
-                  <div class='row'>
-                    <div class='col-sm-1'>
-                      <i ng-class="directiveData.icon || 'icn-info'"></i>
-                    </div>
-                    <div class='col-sm-9'>
-                      <span ng-bind-html='directiveData.body'>{{directiveData.body}}</span>
-                    </div>
-                  </div>
-                  `
-      };
-    }])
-    .directive("actionToast", [function() {
-      return {
-        template: `
-                  <div class='row'>
-                    <div class='col-sm-1'>
-                      <i ng-class='directiveData.icon || "icn-info"'></i>
-                    </div>
-                    <div class='col-sm-9'>
-                      <span>{{directiveData.body}}</span>
-                    </div>
-                    <div class='col-sm-2 btn-options'>
-                      <span ng-repeat='action in directiveData.actions'>
-                        <a class='btn btn-primary' ng-click='action.click()'>{{action.text}}</a>
-                      </span>
-                    </div>
-                  </div>
-                  `
-      };
-    }]);
+    .directive("simpleToast", simpleToast)
+    .directive("actionToast", actionToast);
 })();
