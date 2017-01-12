@@ -1266,32 +1266,41 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a>Dismiss</a>',
-      directiveData: {
-        type: 'success'
-      }
+      closeHtml: '<a>Dismiss</a>'
     };
 
     $rootScope.$on("citizenNet:toastEvent", function (event, options) {
-      var toastOptions = void 0;
       if (_.isObject(options)) {
-        toastOptions = _extends({}, defaults, options);
+        options.directiveData.type = mapType(options.directiveData.type);
+        toaster.pop(_extends({}, defaults, options));
       } else {
-        toastOptions = _extends({}, defaults);
-        toastOptions.directiveData.body = options;
+        toaster.pop(_extends({}, defaults, { directiveData: { body: options } }));
       }
-
-      toaster.pop(toastOptions);
     });
+
+    function mapType(type) {
+      switch (type) {
+        case "success":
+          return "icn-thumbsup";
+        case "warning":
+          return "icn-error";
+        case "danger":
+          return "icn-error";
+        case "error":
+          return "icn-error";
+        default:
+          return "icn-info";
+      }
+    }
   }
 
   angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", [function () {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class="directiveData.type === \'success\' ? \'icn-info\' : \'icn-error\'"></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n                    </div>\n                  </div>\n                  '
+      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class="directiveData.type || \'icn-info\'"></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n                    </div>\n                  </div>\n                  '
     };
   }]).directive("actionToast", [function () {
     return {
-      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i class=\'icn-info\'></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span>{{directiveData.body}}</span>\n                    </div>\n                    <div class=\'col-sm-2 btn-options\'>\n                      <span ng-repeat=\'action in directiveData.actions\'>\n                        <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n                      </span>\n                    </div>\n                  </div>\n                  '
+      template: '\n                  <div class=\'row\'>\n                    <div class=\'col-sm-1\'>\n                      <i ng-class=\'directiveData.type || "icn-info"\'></i>\n                    </div>\n                    <div class=\'col-sm-9\'>\n                      <span>{{directiveData.body}}</span>\n                    </div>\n                    <div class=\'col-sm-2 btn-options\'>\n                      <span ng-repeat=\'action in directiveData.actions\'>\n                        <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n                      </span>\n                    </div>\n                  </div>\n                  '
     };
   }]);
 })();

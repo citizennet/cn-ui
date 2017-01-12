@@ -10,23 +10,27 @@
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a>Dismiss</a>',
-      directiveData: {
-        type: 'success'
-      }
+      closeHtml: '<a>Dismiss</a>'
     };
 
     $rootScope.$on("citizenNet:toastEvent", function(event, options) {
-      let toastOptions;
       if (_.isObject(options)) {
-        toastOptions = { ...defaults, ...options };
+        options.directiveData.type = mapType(options.directiveData.type);
+        toaster.pop({ ...defaults, ...options });
       } else {
-        toastOptions = { ...defaults };
-        toastOptions.directiveData.body = options;
+         toaster.pop({ ...defaults, directiveData: { body: options } });
       }
-      
-      toaster.pop(toastOptions);
     });
+
+    function mapType(type) {
+      switch (type) {
+        case "success": return "icn-thumbsup";
+        case "warning": return "icn-error";
+        case "danger": return "icn-error";
+        case "error": return "icn-error";
+        default: return "icn-info";
+      }
+    }
   }
 
   angular.module('cn.ui')
@@ -36,7 +40,7 @@
         template: `
                   <div class='row'>
                     <div class='col-sm-1'>
-                      <i ng-class="directiveData.type === 'success' ? 'icn-info' : 'icn-error'"></i>
+                      <i ng-class="directiveData.type || 'icn-info'"></i>
                     </div>
                     <div class='col-sm-9'>
                       <span ng-bind-html='directiveData.body'>{{directiveData.body}}</span>
@@ -50,7 +54,7 @@
         template: `
                   <div class='row'>
                     <div class='col-sm-1'>
-                      <i class='icn-info'></i>
+                      <i ng-class='directiveData.type || "icn-info"'></i>
                     </div>
                     <div class='col-sm-9'>
                       <span>{{directiveData.body}}</span>
