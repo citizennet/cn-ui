@@ -7,7 +7,7 @@
   // Include Our Plugins
   const babel = require('gulp-babel');
   const concat = require('gulp-concat');
-  const jshint = require('gulp-jshint');
+  const eslint = require('gulp-eslint');
   const ngAnnotate = require('gulp-ng-annotate');
   const rename = require('gulp-rename');
   const runSequence = require('run-sequence');
@@ -18,12 +18,11 @@
   gulp.task('lint', function() {
     return gulp
         .src(['src/*.js', '!src/*.test.js'])
-        .pipe(jshint({
+        .pipe(eslint.format({
           multistr: true,
           validthis: true,
           esnext: true
-        }))
-        .pipe(jshint.reporter('default'));
+        }));
   });
 
   // Concatenate & Minify JS
