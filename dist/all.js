@@ -1302,11 +1302,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   var actionToast = function actionToast() {
     return {
-      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class=\'padding-right-20\'>\n          <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n        </div>\n        <div class=\'padding-right-20 flex-1\'>\n          <span>{{directiveData.body}}</span>\n        </div>\n        <div class=\'btn-options\'>\n          <span ng-repeat=\'action in directiveData.actions\'>\n            <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n          </span>\n        </div>\n      </div>\n    '
+      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class=\'padding-right-20\'>\n          <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n        </div>\n        <div class=\'padding-right-20 flex-1\'>\n          <span>{{directiveData.body}}</span>\n        </div>\n        <div class=\'btn-group\'>\n          <span ng-repeat=\'action in directiveData.actions\'>\n            <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n          </span>\n        </div>\n      </div>\n    '
     };
   };
 
-  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", simpleToast).directive("actionToast", actionToast);
+  var listToast = function listToast() {
+    return {
+      template: '\n      <div class="flex-box align-items-center">\n        <div class="padding-right-40">\n          <span class="label">{{directiveData.selected.length}}</span>\n          {{directiveData.type}} Selected\n        </div>\n        <div class="padding-right-20 flex-5 btn-group">\n          <span ng-repeat="action in directiveData.actions">\n            <a class="btn btn-default margin-right-10" ng-click="action.click(directiveData)">{{action.text}}</a>\n          </span>\n        </div>\n        <div>\n          <a ng-click="directiveData.deselect()">Deselect All</a>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", simpleToast).directive("actionToast", actionToast).directive("listToast", listToast);
 })();
 'use strict';
 

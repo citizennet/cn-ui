@@ -55,10 +55,29 @@
         <div class='padding-right-20 flex-1'>
           <span>{{directiveData.body}}</span>
         </div>
-        <div class='btn-options'>
+        <div class='btn-group'>
           <span ng-repeat='action in directiveData.actions'>
             <a class='btn btn-primary' ng-click='action.click()'>{{action.text}}</a>
           </span>
+        </div>
+      </div>
+    `
+  });
+
+  const listToast = () => ({
+    template: `
+      <div class="flex-box align-items-center">
+        <div class="padding-right-40">
+          <span class="label">{{directiveData.selected.length}}</span>
+          {{directiveData.type}} Selected
+        </div>
+        <div class="padding-right-20 flex-5 btn-group">
+          <span ng-repeat="action in directiveData.actions">
+            <a class="btn btn-default margin-right-10" ng-click="action.click(directiveData)">{{action.text}}</a>
+          </span>
+        </div>
+        <div>
+          <a ng-click="directiveData.deselect()">Deselect All</a>
         </div>
       </div>
     `
@@ -68,5 +87,6 @@
     .module('cn.ui')
     .controller('toastController', toastController) 
     .directive("simpleToast", simpleToast)
-    .directive("actionToast", actionToast);
+    .directive("actionToast", actionToast)
+    .directive("listToast", listToast);
 })();
