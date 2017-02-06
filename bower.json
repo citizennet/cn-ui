@@ -1,6 +1,7 @@
 {
   "name": "CitizenNet UI Components",
   "dependencies": {
-    "ng-file-upload": "1.4.0"
+    "ng-file-upload": "1.4.0",
+    "angularjs-toaster": "git@github.com:citizennet/AngularJS-Toaster.git#master"
   }
 }

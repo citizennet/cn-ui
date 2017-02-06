@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  angular.module('cn.ui', ['angularFileUpload']);
+  angular.module('cn.ui', ['angularFileUpload', 'toaster', 'ngAnimate']);
 })();
 'use strict';
 
@@ -832,7 +832,7 @@
 
           if (paging.skip !== 1) {
             pages.push({
-              label: '←',
+              label: '\u2190',
               skip: paging.skip - 1
             });
           }
@@ -867,7 +867,7 @@
 
           if (paging.skip !== paging.last) {
             pages.push({
-              label: '→',
+              label: '\u2192',
               skip: paging.skip + 1
             });
           }
@@ -1031,23 +1031,23 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              var overflow = attrs.cnResponsiveOverflow || 'auto';
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': overflow
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': overflow
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            var overflow = attrs.cnResponsiveOverflow || 'auto';
+            height = height ? height + 'px' : 'auto';
+            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': overflow
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': overflow
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
@@ -1252,6 +1252,70 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 })();
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+(function () {
+  'use strict';
+
+  toastController.$inject = ['$rootScope', 'toaster'];
+
+  function toastController($rootScope, toaster) {
+    var defaults = {
+      timeout: 5000,
+      toasterId: 'simple',
+      body: 'simple-toast',
+      bodyOutputType: 'directive',
+      tapToDismiss: false,
+      closeHtml: '<a>Dismiss</a>'
+    };
+
+    $rootScope.$on("citizenNet:toastEvent", function (event, options) {
+      if (_.isObject(options)) {
+        options.directiveData.icon = mapType(options.directiveData.type);
+        toaster.pop(_extends({}, defaults, options));
+      } else {
+        toaster.pop(_extends({}, defaults, { directiveData: { body: options } }));
+      }
+    });
+
+    function mapType(type) {
+      switch (type) {
+        case "success":
+          return "icn-thumbsup";
+        case "warning":
+          return "icn-error";
+        case "danger":
+          return "icn-error";
+        case "error":
+          return "icn-error";
+        default:
+          return "icn-info";
+      }
+    }
+  }
+
+  var simpleToast = function simpleToast() {
+    return {
+      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class="padding-right-20">\n          <i ng-class="directiveData.icon || \'icn-info\'"></i>\n        </div>\n        <div class="padding-right-20 flex-1">\n          <span ng-bind-html=\'directiveData.body\'>{{directiveData.body}}</span>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  var actionToast = function actionToast() {
+    return {
+      template: '\n      <div class=\'flex-box align-items-center\'>\n        <div class=\'padding-right-20\'>\n          <i ng-class=\'directiveData.icon || "icn-info"\'></i>\n        </div>\n        <div class=\'padding-right-20 flex-1\'>\n          <span>{{directiveData.body}}</span>\n        </div>\n        <div class=\'btn-group\'>\n          <span ng-repeat=\'action in directiveData.actions\'>\n            <a class=\'btn btn-primary\' ng-click=\'action.click()\'>{{action.text}}</a>\n          </span>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  var listToast = function listToast() {
+    return {
+      template: '\n      <div class="flex-box align-items-center">\n        <div class="padding-right-40">\n          <span class="label">{{directiveData.selected.length}}</span>\n          {{directiveData.type}} Selected\n        </div>\n        <div class="padding-right-20 flex-5 btn-group">\n          <span ng-repeat="action in directiveData.actions">\n            <a class="btn btn-default margin-right-10" ng-click="action.click()">{{action.text}}</a>\n          </span>\n        </div>\n        <div>\n          <a ng-click="directiveData.deselect()">Deselect All</a>\n        </div>\n      </div>\n    '
+    };
+  };
+
+  angular.module('cn.ui').controller('toastController', toastController).directive("simpleToast", simpleToast).directive("actionToast", actionToast).directive("listToast", listToast);
+})();
+'use strict';
+
 (function () {
   'use strict';
 
@@ -1325,7 +1389,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       },
       link: function link($scope, elem) {
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '…' : ogText,
+            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
