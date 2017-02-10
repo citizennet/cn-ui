@@ -1362,7 +1362,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         'onChange': '&' // callback when toggle changes
       },
       link: function link($scope, elem, attrs, ctrl) {
-        console.log('$scope:', $scope.ngModel, ctrl);
         $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
         $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
         $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
