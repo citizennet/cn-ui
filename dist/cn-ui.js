@@ -781,6 +781,28 @@
 'use strict';
 
 (function () {
+  "use strict";
+
+  cnOnerror.$inject = ['$parse'];
+  angular.module('cn.ui').directive('cnOnerror', cnOnerror);
+
+  function cnOnerror($parse) {
+    '$inject';
+
+    return {
+      restrict: 'A',
+      link: function link(scope, elem, attrs) {
+        var handler = $parse(attrs.cnOnerror);
+        elem[0].onerror = function (e, param) {
+          return handler(scope, { param: param });
+        };
+      }
+    };
+  }
+})();
+'use strict';
+
+(function () {
   'use strict';
 
   angular.module('cn.ui').directive('cnPagination', cnPagination);
@@ -832,7 +854,7 @@
 
           if (paging.skip !== 1) {
             pages.push({
-              label: '\u2190',
+              label: '←',
               skip: paging.skip - 1
             });
           }
@@ -867,7 +889,7 @@
 
           if (paging.skip !== paging.last) {
             pages.push({
-              label: '\u2192',
+              label: '→',
               skip: paging.skip + 1
             });
           }
@@ -1031,23 +1053,23 @@
             $timeout(activate, 500);
             //$timeout(activate, 800); // twice for good measure
           } else {
-            var bottomOffset = attrs.cnResponsiveHeight || 0;
-            var height = w.height() - topOffset - bottomOffset;
-            var overflow = attrs.cnResponsiveOverflow || 'auto';
-            height = height ? height + 'px' : 'auto';
-            //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-            if (_.has(attrs, 'cnSetMaxHeight')) {
-              elem.css({
-                'max-height': height,
-                'overflow': overflow
-              });
-            } else {
-              elem.css({
-                'height': height,
-                'overflow': overflow
-              });
+              var bottomOffset = attrs.cnResponsiveHeight || 0;
+              var height = w.height() - topOffset - bottomOffset;
+              var overflow = attrs.cnResponsiveOverflow || 'auto';
+              height = height ? height + 'px' : 'auto';
+              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
+              if (_.has(attrs, 'cnSetMaxHeight')) {
+                elem.css({
+                  'max-height': height,
+                  'overflow': overflow
+                });
+              } else {
+                elem.css({
+                  'height': height,
+                  'overflow': overflow
+                });
+              }
             }
-          }
         } else {
           elem.css({ 'height': '' });
         }
@@ -1340,7 +1362,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         'onChange': '&' // callback when toggle changes
       },
       link: function link($scope, elem, attrs, ctrl) {
-        console.log('$scope:', $scope.ngModel, ctrl);
         $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
         $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
         $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
@@ -1389,7 +1410,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       },
       link: function link($scope, elem) {
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
+            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '…' : ogText,
             truncated = false;
 
         function truncate() {
