@@ -715,6 +715,16 @@
 
     vm.uploadFile = uploadFile;
 
+    activate();
+
+    function activate() {
+      if (vm.cnFileType === 'image' && vm.ngModel) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+      } else if (vm.cnFileType === 'video' && vm.ngModel) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+      }
+    }
+
     function uploadFile($files) {
       var dfr = $q.defer();
       dfr.promise.then(setFilePath, cfpLoadingBar.complete);
