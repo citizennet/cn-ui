@@ -448,6 +448,7 @@
       replace: true,
       scope: {
         btnStyle: '@',
+        cnDisabled: '=',
         iconStyle: '@',
         callback: '&onFileSelect',
         inputId: '@',
@@ -455,7 +456,7 @@
         accept: '@'
       },
       template: '<div class="file-wrapper">\
-                       <button class="btn btn-file {{btnStyle}}">\
+                       <button class="btn btn-file {{btnStyle}}" ng-disabled="cnDisabled">\
                          <i ng-if="iconStyle" class="{{iconStyle}}"></i> {{btnText}}\
                        </button>\
                        <input type="file" id="{{inputId}}" class="form-control" accept="{{accept}}"\
@@ -465,6 +466,9 @@
         attrs.btnStyle = /btn-(primary|success|info|warning|danger|link)/.test(attrs.btnStyle) ? attrs.btnStyle : attrs.btnStyle + ' btn-default';
         attrs.inputId = attrs.inputId || 'file-' + _.uniqueId();
         attrs.btnText = attrs.btnText || 'Choose a file...';
+        if (attrs.cnDisabled) {
+          attrs.disabled = true;
+        }
 
         return function link($scope, elem) {
           var btn = elem.find('button'),
@@ -689,6 +693,7 @@
         cnPreviewPath: '=',
         cnModelValueKey: '=',
         ngModel: '=',
+        cnDisabled: '=',
         cnData: '='
       },
       controller: Upload,
@@ -703,6 +708,7 @@
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '

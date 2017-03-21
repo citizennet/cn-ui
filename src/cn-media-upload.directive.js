@@ -14,6 +14,7 @@
         cnPreviewPath: '=',
         cnModelValueKey: '=',
         ngModel: '=',
+        cnDisabled: '=',
         cnData: '='
       },
       controller: Upload,
@@ -28,6 +29,7 @@
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
