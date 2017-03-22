@@ -14,6 +14,7 @@
         cnPreviewPath: '=',
         cnModelValueKey: '=',
         ngModel: '=',
+        cnDisabled: '=',
         cnData: '='
       },
       controller: Upload,
@@ -28,21 +29,32 @@
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
-  function Upload($q, $http, $sce, cfpLoadingBar) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
 
+    activate();
+
+    function activate() {
+      if (vm.cnFileType === 'image' && vm.ngModel) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+      } else if (vm.cnFileType === 'video' && vm.ngModel) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+      }
+    }
+
     function uploadFile($files) {
       var dfr = $q.defer();
-      dfr.promise.then(setFilePath, cfpLoadingBar.complete);
+      dfr.promise.then(setFilePath).catch(handleError);
 
       var formData = new FormData();
       formData.append(vm.cnFileType, $files[0]);
@@ -69,6 +81,28 @@
       cfpLoadingBar.complete();
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+      let ngModelController = getNgModelController($scope);
+      if (ngModelController) {
+        _.each(ngModelController.$error, (v, e) => {
+          ngModelController.$setValidity(e, true);
+        });
+      }
+    }
+
+    function handleError(err) {
+      cfpLoadingBar.complete();
+      let error = JSON.parse(err.responseText).error;
+      $scope.$emit("citizenNet:toastEvent", { directiveData: { type: 'error', body: error } });
+    }
+
+    function getNgModelController(scope) {
+      if (scope.ngModel) {
+        return scope.ngModel;
+      } else if (scope.$parent) {
+        return getNgModelController(scope.$parent);
+      } else {
+        return null;
+      }
     }
   }
 })();
