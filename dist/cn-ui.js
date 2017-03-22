@@ -448,6 +448,7 @@
       replace: true,
       scope: {
         btnStyle: '@',
+        cnDisabled: '=',
         iconStyle: '@',
         callback: '&onFileSelect',
         inputId: '@',
@@ -455,7 +456,7 @@
         accept: '@'
       },
       template: '<div class="file-wrapper">\
-                       <button class="btn btn-file {{btnStyle}}">\
+                       <button class="btn btn-file {{btnStyle}}" ng-disabled="cnDisabled">\
                          <i ng-if="iconStyle" class="{{iconStyle}}"></i> {{btnText}}\
                        </button>\
                        <input type="file" id="{{inputId}}" class="form-control" accept="{{accept}}"\
@@ -465,6 +466,9 @@
         attrs.btnStyle = /btn-(primary|success|info|warning|danger|link)/.test(attrs.btnStyle) ? attrs.btnStyle : attrs.btnStyle + ' btn-default';
         attrs.inputId = attrs.inputId || 'file-' + _.uniqueId();
         attrs.btnText = attrs.btnText || 'Choose a file...';
+        if (attrs.cnDisabled) {
+          attrs.disabled = true;
+        }
 
         return function link($scope, elem) {
           var btn = elem.find('button'),
@@ -689,6 +693,7 @@
         cnPreviewPath: '=',
         cnModelValueKey: '=',
         ngModel: '=',
+        cnDisabled: '=',
         cnData: '='
       },
       controller: Upload,
@@ -703,14 +708,15 @@
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
-  function Upload($q, $http, $sce, cfpLoadingBar) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope) {
     var vm = this;
 
     vm.uploadFile = uploadFile;
@@ -727,7 +733,7 @@
 
     function uploadFile($files) {
       var dfr = $q.defer();
-      dfr.promise.then(setFilePath, cfpLoadingBar.complete);
+      dfr.promise.then(setFilePath).catch(handleError);
 
       var formData = new FormData();
       formData.append(vm.cnFileType, $files[0]);
@@ -754,6 +760,28 @@
       cfpLoadingBar.complete();
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+      var ngModelController = getNgModelController($scope);
+      if (ngModelController) {
+        _.each(ngModelController.$error, function (v, e) {
+          ngModelController.$setValidity(e, true);
+        });
+      }
+    }
+
+    function handleError(err) {
+      cfpLoadingBar.complete();
+      var error = JSON.parse(err.responseText).error;
+      $scope.$emit("citizenNet:toastEvent", { directiveData: { type: 'error', body: error } });
+    }
+
+    function getNgModelController(scope) {
+      if (scope.ngModel) {
+        return scope.ngModel;
+      } else if (scope.$parent) {
+        return getNgModelController(scope.$parent);
+      } else {
+        return null;
+      }
     }
   }
 })();
