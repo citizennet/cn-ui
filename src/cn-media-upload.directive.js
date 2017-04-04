@@ -15,6 +15,7 @@
         cnModelValueKey: '=',
         ngModel: '=',
         cnDisabled: '=',
+        cnExistingPreview: '=',
         cnData: '='
       },
       controller: Upload,
@@ -45,7 +46,9 @@
     activate();
 
     function activate() {
-      if (vm.cnFileType === 'image' && vm.ngModel) {
+      if (vm.cnExistingPreview) {
+        vm.filePath = $sce.trustAsResourceUrl(`/uploads/facebook/${vm.cnExistingPreview}`);
+      } else if (vm.cnFileType === 'image' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
