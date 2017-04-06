@@ -20,6 +20,9 @@
           },
 
           link: function($scope) {
+            function linkToFacebookTag() {}
+            $scope.__tag = new linkToFacebookTag();
+
             if($scope.fbObject.twitterLink) {
               $scope.link = $scope.fbObject.twitterLink;
             }

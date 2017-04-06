@@ -14,6 +14,9 @@
     return {
       restrict: 'C',
       link: function link($scope, elem) {
+        function cnCheckboxTag() {}
+        $scope.__tag = new cnCheckboxTag();
+
         if (elem.prop('tagName') === 'INPUT') {
           elem.after('<span></span>');
         } else {
@@ -30,6 +33,10 @@
 
   angular.module('cn.ui').directive('countrySelect', function () {
     return {
+      link: function link(scope) {
+        function countrySelectTag() {}
+        scope.__tag = new countrySelectTag();
+      },
       restrict: 'E',
       template: '<label for="{{id || \'country\'}}">Country</label>\
                      <select id="{{id || \'country\'}}" ng-model="ngModel" class="form-control">\
@@ -307,6 +314,9 @@
   }
 
   function Link($scope, elem, attrs, ctrl) {
+    function csvUploadTag() {}
+    $scope.__tag = new csvUploadTag();
+
     $scope.$watch('vm.ngModel', function (newVal, prevVal) {
       if ($scope.onChange) {
         $scope.onChange({ $value: newVal });
@@ -382,10 +392,18 @@
     };
 
     function link($scope, elem, attrs, vm) {
+      function cnCurrencyFormatTag() {}
+      $scope.__tag = new cnCurrencyFormatTag();
+
       if (!vm) return;
 
       var format = attrs.cnCurrencyFormat;
       var placeholder = attrs.cnCurrencyPlaceholder;
+
+      // Clean up event handlers
+      $scope.$on('$destroy', function () {
+        elem.off('blur', handleBlur);
+      });
 
       activate();
 
@@ -397,19 +415,20 @@
           elem.attr('placeholder', placeholder);
         }
 
-        elem.on('blur', function (el) {
-          if (/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
-
-          var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
-          if (overflow) elem[0].value = overflow[1];
-        });
+        elem.on('blur', handleBlur);
 
         vm.$parsers.unshift(parseVal);
         vm.$formatters.unshift(function (val) {
-          //console.log('val:', val);
           vm.$setDirty();
           return formatVal(val);
         });
+      }
+
+      function handleBlur(el) {
+        if (/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+
+        var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
+        if (overflow) elem[0].value = overflow[1];
       }
 
       function parseVal(val) {
@@ -467,12 +486,24 @@
         attrs.btnText = attrs.btnText || 'Choose a file...';
 
         return function link($scope, elem) {
+          function fileUploadTag() {}
+          $scope.__tag = new fileUploadTag();
+
           var btn = elem.find('button'),
               file = elem.find('input');
 
-          btn.click(function () {
-            file.click();
+          btn.on('click', handleClick);
+
+          // Clean up event handlers and closure variables
+          $scope.$on('$destroy', function () {
+            btn.off('click', handleClick);
+            btn = null;
+            file = null;
           });
+
+          function handleClick() {
+            file.click();
+          }
 
           $scope.onFileSelect = function ($files) {
             $scope.callback({ $files: $files });
@@ -487,6 +518,7 @@
 (function () {
   'use strict';
 
+  MastHead.$inject = ['$scope'];
   angular.module('cn.ui').directive('cnMastHead', cnMastHead);
 
   function cnMastHead() {
@@ -497,7 +529,6 @@
         config: '='
       },
       link: function link(scope, elem) {
-        console.log('scope:', scope);
         scope.vm.elem = elem;
       },
       controller: MastHead,
@@ -506,15 +537,26 @@
     };
   }
 
-  function MastHead() {
+  function MastHead($scope) {
+    'ngInject';
+
+    function cnMastHeadTag() {}
+    $scope.__tag = new cnMastHeadTag();
+
+    // Aggressive destroy
+    $scope.$on('$destroy', function () {
+      _.forOwn(vm, function (_v, k, c) {
+        return c[k] = null;
+      });
+      vm = null;
+    });
+
     var vm = this;
     vm.floater = _.first(vm.config.actions);
     vm.floaters = _.rest(vm.config.actions);
     vm.floatersHeight = 0;
     vm.hideFloaters = true;
     vm.toggleFloaters = toggleFloaters;
-
-    console.log('vm:', vm);
 
     ////////
 
@@ -539,21 +581,40 @@
     };
 
     function Link($scope, elem, attrs) {
+      function cnIFrameHeightTag() {}
+      $scope.__tag = new cnIFrameHeightTag();
+
       var body, $body, h;
       var insurance;
+      var timers = [];
 
       $scope.$watch(function () {
         return attrs.ngSrc;
       }, function () {
         if (attrs.ngSrc) {
           insurance = 0;
-          $timeout(activate, 100);
+          timers = timers.concat($timeout(activate, 100));
         }
+      });
+
+      // Clean up event listeners, timers, and closure references
+      $scope.$on('$destroy', function () {
+        angular.element(body).find('img').off('load', activate);
+
+        body = null;
+
+        _.each(timers, function (t) {
+          return $timeout.cancel(t);
+        });
+        _.empty(timers);
+        timers = null;
       });
 
       ////////
 
       function activate() {
+        console.log(':: activate called ::');
+
         body = getBody();
         if (body) {
           elem.height('');
@@ -562,18 +623,16 @@
           angular.element(body).find('img').on('load', activate);
           if (!insurance) {
             ++insurance;
-            $timeout(activate, 200);
-            $timeout(activate, 500);
-            $timeout(activate, 1000);
-            $timeout(activate, 1500);
-            $timeout(activate, 3500);
-            $timeout(activate, 5000);
-            $timeout(activate, 7500);
-            $timeout(activate, 10000);
+
+            var t = [$timeout(activate, 200), $timeout(activate, 500), $timeout(activate, 1000), $timeout(activate, 1500), $timeout(activate, 3500), $timeout(activate, 5000), $timeout(activate, 7500), $timeout(activate, 10000)];
+
+            timers = timers.concat(t);
           }
+
           return;
         }
-        $timeout(activate, 100);
+
+        timers = timers.concat([$timeout(activate, 100)]);
       }
 
       function getBody() {
@@ -604,6 +663,9 @@
       },
 
       link: function link($scope) {
+        function linkToFacebookTag() {}
+        $scope.__tag = new linkToFacebookTag();
+
         if ($scope.fbObject.twitterLink) {
           $scope.link = $scope.fbObject.twitterLink;
         } else if (_.has($scope.fbObject, 'fbCampaignGroupId')) {
@@ -637,13 +699,15 @@
       },
       template: '<div><cn-progress-bar cn-limit="1" cn-progress="progress"></cn-progress-bar></div>',
       controller: ['$scope', '$interval', function ($scope, $interval) {
+        function cnLoadingBarTag() {}
+        $scope.__tag = new cnLoadingBarTag();
+
         $scope.progress = 0;
         $scope.counter = 1;
         $scope.numerator = 1;
         $scope.denominator = 3;
 
         $scope.$watch('run', function (newVal, oldVal) {
-          console.log('run:', $scope.run);
           if (newVal === oldVal) return;
           if ($scope.run) {
             start();
@@ -661,7 +725,6 @@
         }
 
         function stop() {
-          console.log('stop:', $scope.interval);
           $interval.cancel($scope.interval);
           $scope.progress = 100;
         }
@@ -709,8 +772,11 @@
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar'];
-  function Upload($q, $http, $sce, cfpLoadingBar) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope) {
+    function mediaUploadTag() {}
+    $scope.__tag = new mediaUploadTag();
+
     var vm = this;
 
     vm.uploadFile = uploadFile;
@@ -777,7 +843,6 @@
 
     function open(options) {
       vm.onChangeState = $rootScope.$on('$stateChangeStart', function () {
-        console.log('changeState:', vm.modal);
         vm.onChangeState();
         if (vm.modal) {
           vm.modal.close();
@@ -802,6 +867,9 @@
     return {
       restrict: 'A',
       link: function link(scope, elem, attrs) {
+        function cnOnerrorTag() {}
+        scope.__tag = new cnOnerrorTag();
+
         var handler = $parse(attrs.cnOnerror);
         elem[0].onerror = function (e, param) {
           return handler(scope, { param: param });
@@ -850,6 +918,8 @@
         count: '=?'
       },
       link: function link($scope) {
+        function cnPaginationTag() {}
+        $scope.__tag = new cnPaginationTag();
 
         $scope.$watch('paging', function () {
           if ($scope.paging) {
@@ -864,7 +934,7 @@
 
           if (paging.skip !== 1) {
             pages.push({
-              label: '←',
+              label: '\u2190',
               skip: paging.skip - 1
             });
           }
@@ -899,7 +969,7 @@
 
           if (paging.skip !== paging.last) {
             pages.push({
-              label: '→',
+              label: '\u2192',
               skip: paging.skip + 1
             });
           }
@@ -921,14 +991,24 @@
   function cnParentWidth($window, $timeout) {
     return {
       restrict: 'A',
-      link: Link
+      link: link
     };
 
-    function Link(scope, elem) {
+    function link(scope, elem) {
+      function cnParentWidthTag() {}
+      scope.__tag = new cnParentWidthTag();
+
       var w = angular.element($window);
       var parent = elem.parent();
 
-      w.bind('resize', activate);
+      // Clean up event handlers and closure references
+      scope.$on('$destroy', function () {
+        w.off('resize', activate);
+        w = null;
+        parent = null;
+      });
+
+      w.on('resize', activate);
       activate();
       $timeout(activate, 250);
 
@@ -952,6 +1032,9 @@
     };
 
     function link($scope, elem, attrs, vm) {
+      function cnPercentageFormatTag() {}
+      $scope.__tag = new cnPercentageFormatTag();
+
       if (!vm) return;
 
       vm.$parsers.unshift(function () {
@@ -988,8 +1071,17 @@
                        </div>\
                      </div>',
       link: function link($scope, elem) {
+        function cnProgressBarTag() {}
+        $scope.__tag = new cnProgressBarTag();
+
         var projectedBar = elem.find('.cn-projected-bar'),
             progressBar = elem.find('.cn-progress-bar');
+
+        // Clean up closure references
+        $scope.$on('$destroy', function () {
+          projectedBar = null;
+          progressBar = null;
+        });
 
         $scope.$watch(function () {
           return '' + $scope.limit + $scope.projected + $scope.progress;
@@ -1014,6 +1106,9 @@
     return {
       restrict: 'C',
       link: function link($scope, elem) {
+        function radioTag() {}
+        $scope.__tag = radioTag();
+
         if (elem.prop('tagName') === 'INPUT') {
           elem.after('<span></span>');
         } else {
@@ -1041,6 +1136,16 @@
     return directive;
 
     function linkFunction($scope, elem, attrs) {
+      function cnResponsiveHeightTag() {}
+      $scope.__tag = new cnResponsiveHeightTag();
+
+      // Clean up event handlers and closure references
+      $scope.$on('$destroy', function () {
+        breakpoint = null;
+        w.off('resize', activate);
+        w = null;
+      });
+
       var w = angular.element($window);
       var breakpoint = {
         sm: 768,
@@ -1048,7 +1153,7 @@
         lg: 1200
       }[attrs.cnResponsiveBreak] || 0;
 
-      w.bind('resize', activate);
+      w.on('resize', activate);
       /* give page elements a chance to render before calculation */
       $timeout(activate, 250);
       $timeout(activate, 500); // twice for good measure
@@ -1056,30 +1161,27 @@
       function activate() {
         if ($window.innerWidth > breakpoint) {
           var topOffset = elem.offset().top;
-          //console.log('elem:topOffset:', elem, topOffset);
 
           if (topOffset < 0) {
             // calculate again after any animations have completed
             $timeout(activate, 500);
-            //$timeout(activate, 800); // twice for good measure
           } else {
-              var bottomOffset = attrs.cnResponsiveHeight || 0;
-              var height = w.height() - topOffset - bottomOffset;
-              var overflow = attrs.cnResponsiveOverflow || 'auto';
-              height = height ? height + 'px' : 'auto';
-              //console.log('attrs.cnSetMaxHeight:', attrs.cnSetMaxHeight);
-              if (_.has(attrs, 'cnSetMaxHeight')) {
-                elem.css({
-                  'max-height': height,
-                  'overflow': overflow
-                });
-              } else {
-                elem.css({
-                  'height': height,
-                  'overflow': overflow
-                });
-              }
+            var bottomOffset = attrs.cnResponsiveHeight || 0;
+            var height = w.height() - topOffset - bottomOffset;
+            var overflow = attrs.cnResponsiveOverflow || 'auto';
+            height = height ? height + 'px' : 'auto';
+            if (_.has(attrs, 'cnSetMaxHeight')) {
+              elem.css({
+                'max-height': height,
+                'overflow': overflow
+              });
+            } else {
+              elem.css({
+                'height': height,
+                'overflow': overflow
+              });
             }
+          }
         } else {
           elem.css({ 'height': '' });
         }
@@ -1125,7 +1227,6 @@
             </div>\
           </div>\
         ';
-        console.log('tpl:', tpl);
         return tpl;
       },
       transclude: true,
@@ -1147,6 +1248,9 @@
   }
 
   function Link($scope, elem, attrs, ctrl) {
+    function cnSelectOrTag() {}
+    $scope.__tag = new cnSelectOrTag();
+
     var vm = $scope.vm;
 
     $scope.$watch('vm.ngModel', validate, true);
@@ -1182,7 +1286,6 @@
     ///////////
 
     function activate() {
-      console.log('vm:', vm);
       vm.form.schema._required = _.clone(vm.form.schema.required);
     }
 
@@ -1191,7 +1294,6 @@
     }
 
     function onSelectionChange() {
-      console.log('onSelectionChange:', vm.selected, vm.ngModel);
       vm.setValue(_.first(vm.selected) || null);
     }
 
@@ -1203,7 +1305,6 @@
     }
 
     function toggleView() {
-      console.log('toggleView:', vm.form.view, vm.form);
       vm.form.view = vm.form.view === 'new' ? 'list' : 'new';
       if (vm.selected[0]) {
         vm.selected[0].selected = false;
@@ -1222,13 +1323,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   'use strict';
 
   var CnShelf = function () {
-    CnShelf.$inject = ['$element', '$timeout'];
-    function CnShelf($element, $timeout) {
+    CnShelf.$inject = ['$element', '$timeout', '$scope'];
+    function CnShelf($element, $timeout, $scope) {
       'ngInject';
 
       _classCallCheck(this, CnShelf);
 
-      console.log('constructor::::', $element, this);
+      function cnShelfTag() {}
+      $scope.__tag = new cnShelfTag();
+
       this.$element = $element;
       this.$timeout = $timeout;
     }
@@ -1242,9 +1345,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '$onChanges',
       value: function $onChanges(changes) {
-        console.log('changes:::', changes, this.show);
         if (changes.show) {
-          //this.show = changes.show.currentValue;
           this.toggleShow();
         }
       }
@@ -1289,9 +1390,12 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 (function () {
   'use strict';
 
-  toastController.$inject = ['$rootScope', 'toaster'];
+  toastController.$inject = ['$rootScope', 'toaster', '$scope'];
 
-  function toastController($rootScope, toaster) {
+  function toastController($rootScope, toaster, $scope) {
+    function toastTag() {}
+    $scope.__tag = new toastTag();
+
     var defaults = {
       timeout: 5000,
       toasterId: 'simple',
@@ -1301,7 +1405,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       closeHtml: '<a>Dismiss</a>'
     };
 
-    $rootScope.$on("citizenNet:toastEvent", function (event, options) {
+    var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
       if (_.isObject(options)) {
         options.directiveData.icon = mapType(options.directiveData.type);
         toaster.pop(_extends({}, defaults, options));
@@ -1324,6 +1428,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
           return "icn-info";
       }
     }
+
+    $scope.$on('$destroy', function () {
+      rslistener();
+    });
   }
 
   var simpleToast = function simpleToast() {
@@ -1372,6 +1480,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         'onChange': '&' // callback when toggle changes
       },
       link: function link($scope, elem, attrs, ctrl) {
+        function cnToggleSwitchTag() {}
+        $scope.__tag = new cnToggleSwitchTag();
+
         $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
         $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
         $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
@@ -1384,7 +1495,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         };
 
         $scope.toggle = function ($event) {
-          console.log('toggle:', $scope);
           $event.preventDefault();
           $event.stopImmediatePropagation();
 
@@ -1419,8 +1529,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         show: '@truncateShow'
       },
       link: function link($scope, elem) {
+        function truncateTag() {}
+        $scope.__tag = new truncateTag();
+
+        $scope.$on('$destroy', function () {
+          if ($scope.show) {
+            elem.off($scope.show, truncate);
+          }
+        });
+
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '…' : ogText,
+            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
