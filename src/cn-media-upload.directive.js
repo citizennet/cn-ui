@@ -39,6 +39,9 @@
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope) {
+    function mediaUploadTag() {}
+    $scope.__tag = new mediaUploadTag();
+
     var vm = this;
 
     vm.uploadFile = uploadFile;

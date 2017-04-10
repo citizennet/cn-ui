@@ -27,6 +27,9 @@
   }
 
   function Link($scope, elem, attrs, ctrl) {
+    function csvUploadTag() {}
+    $scope.__tag = new csvUploadTag();
+
     $scope.$watch('vm.ngModel', function(newVal, prevVal) {
         if($scope.onChange) {
           $scope.onChange({$value: newVal});

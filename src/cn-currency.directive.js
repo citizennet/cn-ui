@@ -12,10 +12,18 @@
     };
 
     function link($scope, elem, attrs, vm) {
+      function cnCurrencyFormatTag() {}
+      $scope.__tag = new cnCurrencyFormatTag();
+
       if(!vm) return;
 
       var format = attrs.cnCurrencyFormat;
       var placeholder = attrs.cnCurrencyPlaceholder;
+
+      // Clean up event handlers
+      $scope.$on('$destroy', function() {
+        elem.off('blur', handleBlur);
+      });
 
       activate();
 
@@ -27,21 +35,21 @@
           elem.attr('placeholder', placeholder);
         }
 
-        elem.on('blur', function(el) {
-          if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
-
-          var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
-          if(overflow) elem[0].value = overflow[1];
-        });
+        elem.on('blur', handleBlur);
 
         vm.$parsers.unshift(parseVal);
         vm.$formatters.unshift(function(val) {
-          //console.log('val:', val);
           vm.$setDirty();
           return formatVal(val);
         });
       }
 
+      function handleBlur(el) {
+        if(/\.\d$/.test(elem[0].value)) return elem[0].value += '0';
+
+        var overflow = elem[0].value.match(/(\d*\.\d{2})(.+)/);
+        if(overflow) elem[0].value = overflow[1];
+      }
 
       function parseVal(val) {
         if(!val) return val;
