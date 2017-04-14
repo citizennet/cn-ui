@@ -146,7 +146,6 @@
         config: '='
       },
       link: (scope, elem) => {
-        console.log('scope:', scope);
         scope.vm.elem = elem;
       },
       controller: MastHead,
@@ -155,21 +154,29 @@
     };
   }
 
-  function MastHead() {
-    const vm = this;
+  function MastHead($scope) {
+    'ngInject';
+
+    function cnMastHeadTag() {}
+    $scope.__tag = new cnMastHeadTag();
+
+    // Aggressive destroy
+    $scope.$on('$destroy', () => {
+      _.forOwn(vm, (_v, k, c) => c[k] = null);
+      vm = null;
+    });
+
+    let vm = this;
     vm.floater = _.first(vm.config.actions);
     vm.floaters = _.rest(vm.config.actions);
     vm.floatersHeight = 0;
     vm.hideFloaters = true;
     vm.toggleFloaters = toggleFloaters;
 
-    console.log('vm:', vm);
-
     ////////
 
     function toggleFloaters(hide) {
-      vm.floatersHeight = hide ?
-          0 : vm.elem.find('.cn-floaters-inner').outerHeight() + 'px';
+      vm.floatersHeight = hide ? 0 : vm.elem.find('.cn-floaters-inner').outerHeight() + 'px';
       vm.hideFloaters = hide;
     }
   }

@@ -2,23 +2,27 @@
   'use strict';
 
   class CnShelf {
-    constructor($element, $timeout) {
+    constructor($element, $timeout, $scope) {
       'ngInject';
-      console.log('constructor::::', $element, this);
+
+      function cnShelfTag() {}
+      $scope.__tag = new cnShelfTag();
+
       this.$element = $element;
       this.$timeout = $timeout;
     }
+
     $onInit() {
       this.$element.addClass('animated fast animated-width');
       this.toggleShow();
     }
+
     $onChanges(changes) {
-      console.log('changes:::', changes, this.show);
       if(changes.show) {
-        //this.show = changes.show.currentValue;
         this.toggleShow();
       }
     }
+
     toggleShow() {
       if(this.show) {
         this.$timeout(() => {
@@ -46,6 +50,6 @@
   };
 
   angular
-      .module('cn.ui')
-      .component('cnShelf', cnShelf);
+    .module('cn.ui')
+    .component('cnShelf', cnShelf);
 })();

@@ -37,6 +37,8 @@
         count: '=?'
       },
       link: function($scope) {
+        function cnPaginationTag() {}
+        $scope.__tag = new cnPaginationTag();
 
         $scope.$watch('paging', function() {
           if($scope.paging) {

@@ -35,7 +35,6 @@
             </div>\
           </div>\
         ';
-        console.log('tpl:', tpl);
         return tpl;
       },
       transclude: true,
@@ -57,6 +56,9 @@
   }
 
   function Link($scope, elem, attrs, ctrl) {
+    function cnSelectOrTag() {}
+    $scope.__tag = new cnSelectOrTag();
+
     var vm = $scope.vm;
 
     $scope.$watch('vm.ngModel', validate, true);
@@ -92,7 +94,6 @@
     ///////////
 
     function activate() {
-      console.log('vm:', vm);
       vm.form.schema._required = _.clone(vm.form.schema.required);
     }
 
@@ -101,7 +102,6 @@
     }
 
     function onSelectionChange() {
-      console.log('onSelectionChange:', vm.selected, vm.ngModel);
       vm.setValue(_.first(vm.selected) || null);
     }
 
@@ -113,7 +113,6 @@
     }
 
     function toggleView() {
-      console.log('toggleView:', vm.form.view, vm.form);
       vm.form.view = vm.form.view === 'new' ? 'list' : 'new';
       if(vm.selected[0]) {
         vm.selected[0].selected = false;
