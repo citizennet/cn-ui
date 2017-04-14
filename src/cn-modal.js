@@ -2,8 +2,8 @@
   'use strict';
 
   angular
-      .module('cn.ui')
-      .factory('cnModal', cnModal);
+    .module('cn.ui')
+    .factory('cnModal', cnModal);
 
   cnModal.$inject = ['$modal', '$rootScope'];
   function cnModal($modal, $rootScope) {
@@ -18,7 +18,6 @@
 
     function open(options) {
       vm.onChangeState = $rootScope.$on('$stateChangeStart', () => {
-        console.log('changeState:', vm.modal);
         vm.onChangeState();
         if(vm.modal) {
           vm.modal.close();
@@ -28,5 +27,4 @@
       return vm.modal;
     }
   }
-
 })();

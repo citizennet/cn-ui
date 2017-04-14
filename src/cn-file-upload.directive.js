@@ -33,12 +33,24 @@
             }
 
             return function link($scope, elem) {
+              function fileUploadTag() {}
+              $scope.__tag = new fileUploadTag();
+
               var btn = elem.find('button'),
                   file = elem.find('input');
 
-              btn.click(function() {
-                file.click();
+              btn.on('click', handleClick);
+
+              // Clean up event handlers and closure variables
+              $scope.$on('$destroy', function() {
+                btn.off('click', handleClick);
+                btn = null;
+                file = null;
               });
+
+              function handleClick() {
+                file.click();
+              }
 
               $scope.onFileSelect = function($files) {
                 $scope.callback({$files: $files});

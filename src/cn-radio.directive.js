@@ -7,6 +7,9 @@
         return {
           restrict: 'C',
           link: function($scope, elem) {
+            function radioTag() {}
+            $scope.__tag = radioTag();
+
             if(elem.prop('tagName') === 'INPUT') {
               elem.after('<span></span>');
             }

@@ -24,6 +24,9 @@
             'onChange': '&'     // callback when toggle changes
           },
           link: function($scope, elem, attrs, ctrl) {
+            function cnToggleSwitchTag() {}
+            $scope.__tag = new cnToggleSwitchTag();
+
             $scope.onValue = _.isUndefined($scope.onValue) ? true : $scope.onValue;
             $scope.offValue = _.isUndefined($scope.offValue) ? false : $scope.offValue;
             $scope.undefinedClass = $scope.undefinedClass || 'schrodinger';
@@ -38,7 +41,6 @@
             };
 
             $scope.toggle = function($event) {
-              console.log('toggle:', $scope);
               $event.preventDefault();
               $event.stopImmediatePropagation();
 
