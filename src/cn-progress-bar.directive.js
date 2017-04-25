@@ -21,8 +21,17 @@
                        </div>\
                      </div>',
           link: function($scope, elem) {
+            function cnProgressBarTag() {}
+            $scope.__tag = new cnProgressBarTag();
+
             var projectedBar = elem.find('.cn-projected-bar'),
                 progressBar = elem.find('.cn-progress-bar');
+
+            // Clean up closure references
+            $scope.$on('$destroy', function() {
+              projectedBar = null;
+              progressBar = null;
+            });
 
             $scope.$watch(function() {
               return '' + $scope.limit + $scope.projected + $scope.progress;

@@ -11,6 +11,9 @@
     };
 
     function link($scope, elem, attrs, vm) {
+      function cnPercentageFormatTag() {}
+      $scope.__tag = new cnPercentageFormatTag();
+
       if(!vm) return;
 
       vm.$parsers.unshift(function() {

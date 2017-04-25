@@ -7,6 +7,9 @@
         return {
           restrict: 'C',
           link: function($scope, elem) {
+            function cnCheckboxTag() {}
+            $scope.__tag = new cnCheckboxTag();
+
             if(elem.prop('tagName') === 'INPUT') {
               elem.after('<span></span>');
             }

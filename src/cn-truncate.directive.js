@@ -12,6 +12,15 @@
             show: '@truncateShow'
           },
           link: function($scope, elem) {
+            function truncateTag() {}
+            $scope.__tag = new truncateTag();
+
+            $scope.$on('$destroy', () => {
+              if ($scope.show) {
+                elem.off($scope.show, truncate);
+              }
+            });
+
             var ogText = $scope.text || '',
                 shortText = ogText.length > $scope.size ?
                   ogText.substr(0, $scope.size) + '\u2026' : ogText,

@@ -5,6 +5,10 @@
       .module('cn.ui')
       .directive('countrySelect', function() {
         return {
+          link: function(scope) {
+            function countrySelectTag() {}
+            scope.__tag = new countrySelectTag();
+          },
           restrict: 'E',
           template: '<label for="{{id || \'country\'}}">Country</label>\
                      <select id="{{id || \'country\'}}" ng-model="ngModel" class="form-control">\

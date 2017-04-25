@@ -1,9 +1,12 @@
 (function() {
   'use strict';
 
-  toastController.$inject = ['$rootScope', 'toaster'];
+  toastController.$inject = ['$rootScope', 'toaster', '$scope'];
 
-  function toastController($rootScope, toaster) {
+  function toastController($rootScope, toaster, $scope) {
+    function toastTag() {}
+    $scope.__tag = new toastTag();
+
     const defaults = {
       timeout: 5000,
       toasterId: 'simple',
@@ -13,7 +16,7 @@
       closeHtml: '<a>Dismiss</a>'
     };
 
-    $rootScope.$on("citizenNet:toastEvent", function(event, options) {
+    const rslistener = $rootScope.$on("citizenNet:toastEvent", function(event, options) {
       if (_.isObject(options)) {
         options.directiveData.icon = mapType(options.directiveData.type);
         toaster.pop({ ...defaults, ...options });
@@ -31,6 +34,10 @@
         default: return "icn-info";
       }
     }
+
+    $scope.$on('$destroy', () => {
+      rslistener();
+    });
   }
 
   const simpleToast = () => ({
@@ -85,7 +92,7 @@
 
   angular
     .module('cn.ui')
-    .controller('toastController', toastController) 
+    .controller('toastController', toastController)
     .directive("simpleToast", simpleToast)
     .directive("actionToast", actionToast)
     .directive("listToast", listToast);
