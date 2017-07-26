@@ -19,6 +19,9 @@
       function cnResponsiveHeightTag() {}
       $scope.__tag = new cnResponsiveHeightTag();
 
+      console.log('attrs.cnResponsiveHeight', attrs.cnResponsiveHeight);
+      if(attrs.cnResponsiveHeight === 'false') return;
+
       // Clean up event handlers and closure references
       $scope.$on('$destroy', () => {
         breakpoint = null;
