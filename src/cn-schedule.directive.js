@@ -118,7 +118,7 @@
     }
   }
 
-  export default {
+  const cnScheduleComponent = {
     bindings: {
       form: '<'
     },
