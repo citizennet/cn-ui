@@ -1738,13 +1738,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     return {
       restrict: 'E',
       replace: true,
-      template: '\
-                  <div class="cn-toggle"\
-                       ng-class="currentCssState()"\
-                       ng-click="toggle($event)">\
-                    <i class="icn-toggle"\
-                       ng-class="currentCssState()"></i>\
-                  </div>',
+      template: '\n            <div class="cn-toggle"\n                  ng-class="currentCssState()"\n                  ng-click="toggle($event)">\n              <i class="icn-toggle"\n                  ng-class="currentCssState()"></i>\n            </div>\n          ',
       require: '^ngModel',
       scope: {
         'ngModel': '=', // property used to determine on / off state
@@ -1752,6 +1746,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         'offValue': '=?',
         'undefinedClass': '=?',
         'readOnly': '=',
+        'required': '=',
         'onChange': '&' // callback when toggle changes
       },
       link: function link($scope, elem, attrs, ctrl) {
@@ -1786,6 +1781,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             $scope.onChange();
           }
         };
+
+        $scope.$watch('ngModel', function (val, pre) {
+          ctrl.$setValidity('schemaForm', true);
+          ctrl.$setValidity('tv4-302', !$scope.required || !angular.isUndefined(val));
+        });
       }
     };
   });
