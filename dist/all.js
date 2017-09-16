@@ -1466,6 +1466,162 @@
 })();
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(function () {
+
+  'use strict';
+
+  var CnSchedule = function () {
+    CnSchedule.$inject = ['$scope'];
+    function CnSchedule($scope) {
+      'ngInject';
+
+      // https://tools.ietf.org/html/rfc5545#section-3.3.10
+
+      var _this = this;
+
+      _classCallCheck(this, CnSchedule);
+
+      this.FREQ = {
+        SECONDLY: "SECONDLY",
+        MINUTELY: "MINUTELY",
+        DAILY: 'DAILY',
+        WEEKLY: 'WEEKLY',
+        MONTHLY: 'MONTHLY',
+        YEARLY: "YEARLY"
+      };
+
+      this.WEEKDAY = {
+        MO: 'MO',
+        TU: 'TU',
+        WE: 'WE',
+        TH: 'TH',
+        FR: 'FR',
+        SA: 'SA',
+        SU: "SU"
+      };
+
+      this.state = {
+        BIWEEKLY: {
+          freq: this.FREQ.WEEKLY,
+          interval: 2,
+          by: [this.WEEKDAY.MO, this.WEEKDAY.FR],
+          _option: 'BIWEEKLY'
+        },
+        BOM: {
+          freq: this.FREQ.MONTHLY,
+          interval: 1,
+          by: [1],
+          _option: 'BOM'
+        },
+        DAILY: {
+          freq: this.FREQ.DAILY,
+          inerval: 1,
+          _option: 'DAILY'
+        },
+        EOM: {
+          freq: this.FREQ.MONTHLY,
+          interval: 1,
+          by: [-1],
+          _option: 'EOM'
+        },
+        MONTHLY: {
+          freq: this.FREQ.MONTHLY,
+          interval: 1,
+          by: [14],
+          _option: 'MONTHLY'
+        },
+        WEEKLY: {
+          freq: this.FREQ.WEEKLY,
+          interval: 1,
+          by: [this.WEEKDAY.MO],
+          _option: 'WEEKLY'
+        },
+        WORKDAY: {
+          freq: this.FREQ.DAILY,
+          interval: 1,
+          by: _(this.WEEKDAY).keys().reject(function (value) {
+            return _.eq(value, _this.WEEKDAY.SA) || _.eq(value, _this.WEEKDAY.SU);
+          }).value(),
+          _option: 'WORKDAY'
+        }
+      };
+
+      this.keyedWeekDays = _.map(this.WEEKDAY, function (key, value) {
+        return { name: _this.showWeekDay(value), value: value };
+      });
+
+      $scope.$watch(function () {
+        return _this.model;
+      }, function (value) {
+        return _this.ngModel.$setViewValue(value);
+      });
+    }
+
+    _createClass(CnSchedule, [{
+      key: '$onInit',
+      value: function $onInit() {
+        var _this2 = this;
+
+        this.ngModel.$render = function () {
+          var viewValue = _this2.ngModel.$viewValue;
+          var _option = _.get(viewValue, '_option');
+
+          if (_.isObject(viewValue) && _.isString(_option)) {
+            _.assign(_this2.state[_option], viewValue);
+            _this2.model = _this2.state[_option];
+          } else {
+            _this2.model = _this2.state.WEEKLY;
+          }
+        };
+      }
+    }, {
+      key: 'handleChangeBiWeekly',
+      value: function handleChangeBiWeekly(biweekly) {
+        _.set(this.state.BIWEEKLY, 'by', biweekly);
+      }
+    }, {
+      key: 'handleChangeWeekly',
+      value: function handleChangeWeekly(weekday) {
+        _.set(this.state.WEEKLY, 'by', [weekday]);
+      }
+    }, {
+      key: 'showWeekDay',
+      value: function showWeekDay(day) {
+        return {
+          MO: 'Monday',
+          TU: 'Tuesday',
+          WE: 'Wednesday',
+          TH: 'Thursday',
+          FR: 'Friday',
+          SA: 'Saturday',
+          SU: 'Sunday'
+        }[day];
+      }
+    }]);
+
+    return CnSchedule;
+  }();
+
+  var cnScheduleComponent = {
+    bindings: {
+      form: '<'
+    },
+    controller: CnSchedule,
+    controllerAs: 'schedule',
+    require: {
+      ngModel: '^ngModel'
+    },
+    template: '\n      <div class="form-group">\n        <div class="btn-group clearfix">\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.WEEKLY">\n              Every\n              &nbsp;\n              <div class="btn-group"\n                   uib-dropdown\n                   is-open="weeklyIsOpen">\n                <button type="button"\n                        class="btn btn-primary"\n                        uib-dropdown-toggle\n                        ng-disabled="schedule.model._option !== \'WEEKLY\'"\n                        style="background-color: #DEDEDE; color: black;">\n                  {{ schedule.showWeekDay(schedule.state.WEEKLY.by[0]) }}\n                  &nbsp;\n                  <span class="caret"></span>\n                </button>\n                <ul class="dropdown-menu"\n                    uib-dropdown-menu\n                    role="menu"\n                    aria-labelledby="single-button">\n                  <li role="menuitem"\n                      ng-click="schedule.handleChangeWeekly(wd.value)"\n                      ng-repeat="wd in schedule.keyedWeekDays track by wd.value">\n                    <a>{{ wd.name }}</a>\n                  </li>\n                </ul>\n              </div>\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.BIWEEKLY">\n              Every\n              &nbsp;\n              <div class="btn-group"\n                   uib-dropdown\n                   is-open="biWeeklyXIsOpen">\n                <button type="button"\n                        class="btn btn-primary"\n                        uib-dropdown-toggle\n                        ng-disabled="schedule.model._option !== \'BIWEEKLY\'"\n                        style="background-color: #DEDEDE; color: black;">\n                  {{ schedule.showWeekDay(schedule.state.BIWEEKLY.by[0]) }}\n                  &nbsp;\n                  <span class="caret"></span>\n                </button>\n                <ul class="dropdown-menu"\n                    uib-dropdown-menu\n                    role="menu"\n                    aria-labelledby="single-button">\n                  <li role="menuitem"\n                      ng-hide="wd.value === schedule.state.BIWEEKLY.by[1]"\n                      ng-click="schedule.handleChangeBiWeekly([wd.value, schedule.state.BIWEEKLY.by[1]])"\n                      ng-repeat="wd in schedule.keyedWeekDays track by wd.value">\n                    <a>{{ wd.name }}</a>\n                  </li>\n                </ul>\n              </div>\n              &nbsp;\n              and\n              &nbsp;\n              <div class="btn-group"\n                   uib-dropdown\n                   is-open="biWeeklyYIsOpen">\n                <button type="button"\n                        class="btn btn-primary"\n                        uib-dropdown-toggle\n                        ng-disabled="schedule.model._option !== \'BIWEEKLY\'"\n                        style="background-color: #DEDEDE; color: black;">\n                  {{ schedule.showWeekDay(schedule.state.BIWEEKLY.by[1]) }}\n                  &nbsp;\n                  <span class="caret"></span>\n                </button>\n                <ul class="dropdown-menu"\n                    uib-dropdown-menu\n                    role="menu"\n                    aria-labelledby="single-button">\n                  <li role="menuitem"\n                      ng-hide="wd.value === schedule.state.BIWEEKLY.by[0]"\n                      ng-click="schedule.handleChangeBiWeekly([schedule.state.BIWEEKLY.by[0], wd.value])"\n                      ng-repeat="wd in schedule.keyedWeekDays track by wd.value">\n                    <a>{{ wd.name }}</a>\n                  </li>\n                </ul>\n              </div>\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.WORKDAY">\n              Weekdays\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.DAILY">\n              Daily\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.BOM">\n              Beginning of Month\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.EOM">\n              End of Month\n            </input>\n          </label>\n\n          <label class="radio radio-block">\n            <input type="radio"\n                   ng-model="schedule.model"\n                   ng-value="schedule.state.MONTHLY">\n              Every\n              &nbsp;\n              <input max="31"\n                     min="1"\n                     ng-disabled="schedule.model._option !== \'MONTHLY\'"\n                     ng-model-options="{ debounce: 300 }"\n                     ng-model="schedule.state.MONTHLY.by[0]"\n                     step="1"\n                     style="width: 50px; text-align: center;"\n                     type="number"\n                     class="form-control" />\n              &nbsp;\n              of the month\n            </input>\n          </label>\n        </div>\n      </div>\n    '
+  };
+
+  angular.module('cn.ui').component('cnSchedule', cnScheduleComponent);
+})();
+'use strict';
+
 (function () {
   'use strict';
 
