@@ -7,13 +7,14 @@
         return {
           restrict: 'E',
           replace: true,
-          template: '\
-                  <div class="cn-toggle"\
-                       ng-class="currentCssState()"\
-                       ng-click="toggle($event)">\
-                    <i class="icn-toggle"\
-                       ng-class="currentCssState()"></i>\
-                  </div>',
+          template: `
+            <div class="cn-toggle"
+                  ng-class="currentCssState()"
+                  ng-click="toggle($event)">
+              <i class="icn-toggle"
+                  ng-class="currentCssState()"></i>
+            </div>
+          `,
           require: '^ngModel',
           scope: {
             'ngModel': '=',     // property used to determine on / off state
@@ -21,6 +22,7 @@
             'offValue': '=?',
             'undefinedClass': '=?',
             'readOnly': '=',
+            'required': '=',
             'onChange': '&'     // callback when toggle changes
           },
           link: function($scope, elem, attrs, ctrl) {
@@ -58,6 +60,11 @@
                 $scope.onChange();
               }
             };
+
+            $scope.$watch('ngModel', (val, pre) => {
+              ctrl.$setValidity('schemaForm', true);
+              ctrl.$setValidity('tv4-302', !$scope.required || !(angular.isUndefined(val)));
+            })
           }
         };
       });
