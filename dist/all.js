@@ -1519,7 +1519,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         },
         DAILY: {
           freq: this.FREQ.DAILY,
-          inerval: 1,
+          interval: 1,
           _option: 'DAILY'
         },
         EOM: {
