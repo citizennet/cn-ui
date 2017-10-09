@@ -42,7 +42,7 @@
         },
         DAILY: {
           freq: this.FREQ.DAILY,
-          inerval: 1,
+          interval: 1,
           _option: 'DAILY'
         },
         EOM: {
