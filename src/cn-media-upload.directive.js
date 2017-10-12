@@ -45,6 +45,7 @@
     var vm = this;
 
     vm.uploadFile = uploadFile;
+    $scope.$watch('vm.ngModel', activate);
 
     activate();
 
