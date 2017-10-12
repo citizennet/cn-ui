@@ -1028,6 +1028,7 @@
     var vm = this;
 
     vm.uploadFile = uploadFile;
+    $scope.$watch('vm.ngModel', activate);
 
     activate();
 
@@ -1206,7 +1207,7 @@
 
           if (paging.skip !== 1) {
             pages.push({
-              label: '←',
+              label: '\u2190',
               skip: paging.skip - 1
             });
           }
@@ -1241,7 +1242,7 @@
 
           if (paging.skip !== paging.last) {
             pages.push({
-              label: '→',
+              label: '\u2192',
               skip: paging.skip + 1
             });
           }
@@ -1970,7 +1971,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
 
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '…' : ogText,
+            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
