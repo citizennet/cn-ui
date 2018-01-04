@@ -433,13 +433,14 @@
 
       function parseVal(val) {
         if (!val) return val;
+        var parsed = parseFloat(val.replace(/\,/g, ''));
         if (format === 'cents') {
-          return _.multiply(val, 100);
+          return _.multiply(parsed, 100);
         }
         if (format === 'microcents') {
-          return _.multiply(val, 1000000);
+          return _.multiply(parsed, 1000000);
         }
-        return parseFloat(val);
+        return parsed;
       }
 
       function formatVal(val) {
