@@ -45,7 +45,7 @@
     var vm = this;
 
     vm.uploadFile = uploadFile;
-    $scope.$watch('vm.ngModel', activate);
+    $scope.$watch('vm.ngModel', updatePreview);
 
     activate();
 
@@ -56,6 +56,12 @@
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+      }
+    }
+
+    function updatePreview() {
+      if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes("/")) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }
     }
 
