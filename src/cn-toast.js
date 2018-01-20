@@ -80,11 +80,15 @@
         </div>
         <div class="padding-right-20 flex-5 btn-group">
           <span ng-repeat="action in directiveData.actions">
-            <a class="btn btn-default margin-right-10" ng-click="action.click()">{{action.text}}</a>
+            <a
+              class="btn btn-default margin-right-10"
+              ng-click="action.click()"
+              ng-disabled="action.disabled && action.disabled()"
+            >{{action.text}}</a>
           </span>
-        </div>
-        <div>
-          <a ng-click="directiveData.deselect()">Deselect All</a>
+          <span>
+            <a class="btn btn-transparent" ng-click="directiveData.deselect()">Deselect All</a>
+          </span>
         </div>
       </div>
     `
