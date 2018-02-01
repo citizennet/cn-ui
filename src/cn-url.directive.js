@@ -24,7 +24,6 @@
       //////////
 
       function activate() {
-        elem.placeholder = "https://...";
         elem.on('input', handleChange);
       }
 

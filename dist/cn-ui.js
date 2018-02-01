@@ -2020,7 +2020,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       //////////
 
       function activate() {
-        elem.placeholder = "https://...";
         elem.on('input', handleChange);
       }
 
