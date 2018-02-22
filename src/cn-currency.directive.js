@@ -4,8 +4,7 @@
   angular.module('cn.ui')
       .directive('cnCurrencyFormat', cnCurrencyFormat);
 
-  cnCurrencyFormat.$inject = ['$compile'];
-  function cnCurrencyFormat($compile) {
+  function cnCurrencyFormat() {
     return {
       require: '?ngModel',
       link: link
