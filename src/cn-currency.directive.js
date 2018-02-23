@@ -1,8 +1,9 @@
 (function() {
   'use strict';
 
-  angular.module('cn.ui')
-      .directive('cnCurrencyFormat', cnCurrencyFormat);
+  angular
+    .module('cn.ui')
+    .directive('cnCurrencyFormat', cnCurrencyFormat);
 
   function cnCurrencyFormat() {
     return {
