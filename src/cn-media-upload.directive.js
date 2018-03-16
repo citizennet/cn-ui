@@ -26,7 +26,7 @@
           <img ng-if="vm.cnFileType === \'image\'" ng-src="{{vm.filePath}}"/>\
           <video ng-if="vm.cnFileType === \'video\' && vm.filePath"\
                  ng-src="{{vm.filePath}}"\
-                 controls="controls" preload="none"/>\
+                 controls="controls"/>\
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
