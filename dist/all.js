@@ -1009,7 +1009,7 @@
           <img ng-if="vm.cnFileType === \'image\'" ng-src="{{vm.filePath}}"/>\
           <video ng-if="vm.cnFileType === \'video\' && vm.filePath"\
                  ng-src="{{vm.filePath}}"\
-                 controls="controls"/>\
+                 controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
                      btn-text="Upload {{vm.cnFileType | titleCase}}"\
@@ -1043,7 +1043,7 @@
     }
 
     function updatePreview() {
-      if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes("/")) {
+      if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }
     }
