@@ -60,7 +60,7 @@
     }
 
     function updatePreview() {
-      if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes("/")) {
+      if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }
     }
