@@ -999,6 +999,7 @@
         ngModel: '=',
         cnDisabled: '=',
         cnExistingPreview: '=',
+        cnForm: '=',
         cnData: '='
       },
       controller: Upload,
@@ -1029,7 +1030,9 @@
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
-
+    if (vm.cnForm) {
+      var key = vm.cnForm.service.getKey(vm.cnForm.key);
+    }
     activate();
 
     function activate() {
@@ -1045,6 +1048,8 @@
     function updatePreview() {
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+      } else if (vm.cnForm && vm.cnForm.service.schema.data.imagePreviews && vm.cnForm.service.schema.data.imagePreviews[key]) {
+        vm.filePath = $sce.trustAsResourceUrl(vm.cnForm.service.schema.data.imagePreviews[key]);
       }
     }
 
@@ -1075,6 +1080,9 @@
 
     function setFilePath(response) {
       cfpLoadingBar.complete();
+      if (vm.cnForm && vm.cnForm.service.schema.data.imagePreviews) {
+        delete vm.cnForm.service.schema.data.imagePreviews[key];
+      }
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
       var ngModelController = getNgModelController($scope);
