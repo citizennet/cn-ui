@@ -86,7 +86,7 @@
               ng-disabled="action.disabled && action.disabled()"
             >{{action.text}}</a>
             <i class="fa fa-question"
-               style="color:lightgrey; cursor:pointer;"
+               style="color:lightgrey; cursor:pointer;padding:5px;"
                ng-if="action.tooltip && action.disabled && action.disabled()"
                tooltip="{{action.tooltip}}"
             ></i>
