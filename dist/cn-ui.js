@@ -1000,7 +1000,9 @@
         cnDisabled: '=',
         cnExistingPreview: '=',
         cnForm: '=',
-        cnData: '='
+        cnData: '=',
+        cnKey: '=',
+        cnImagePreviews: '='
       },
       controller: Upload,
       controllerAs: 'vm',
@@ -1030,9 +1032,6 @@
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
-    if (vm.cnForm) {
-      var key = vm.cnForm.service.getKey(vm.cnForm.key);
-    }
     activate();
 
     function activate() {
@@ -1048,8 +1047,8 @@
     function updatePreview() {
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
-      } else if (vm.cnForm && vm.cnForm.service.schema.data.imagePreviews && vm.cnForm.service.schema.data.imagePreviews[key]) {
-        vm.filePath = $sce.trustAsResourceUrl(vm.cnForm.service.schema.data.imagePreviews[key]);
+      } else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
+        vm.filePath = $sce.trustAsResourceUrl(_.get(vm.cnImagePreviews, vm.cnKey));
       }
     }
 
@@ -1080,8 +1079,8 @@
 
     function setFilePath(response) {
       cfpLoadingBar.complete();
-      if (vm.cnForm && vm.cnForm.service.schema.data.imagePreviews) {
-        delete vm.cnForm.service.schema.data.imagePreviews[key];
+      if (vm.cnImagePreviews) {
+        delete vm.cnImagePreviews[vm.cnKey];
       }
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
@@ -1940,7 +1939,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   var listToast = function listToast() {
     return {
-      template: '\n      <div class="flex-box align-items-center">\n        <div class="padding-right-40">\n          <span class="label">{{directiveData.selected.length}}</span>\n          {{directiveData.type}} Selected\n        </div>\n        <div class="padding-right-20 flex-5 btn-group">\n          <span ng-repeat="action in directiveData.actions">\n            <a\n              class="btn btn-default margin-right-10"\n              ng-click="action.click()"\n              ng-disabled="action.disabled && action.disabled()"\n            >{{action.text}}</a>\n            <i class="fa fa-question"\n               style="color:lightgrey; cursor:pointer;"\n               ng-if="action.tooltip && action.disabled && action.disabled()"\n               tooltip="{{action.tooltip}}"\n            ></i>\n          </span>\n          <span>\n            <a class="btn btn-transparent" ng-click="directiveData.deselect()">Deselect All</a>\n          </span>\n        </div>\n      </div>\n    '
+      template: '\n      <div class="flex-box align-items-center">\n        <div class="padding-right-40">\n          <span class="label">{{directiveData.selected.length}}</span>\n          {{directiveData.type}} Selected\n        </div>\n        <div class="padding-right-20 flex-5 btn-group">\n          <span ng-repeat="action in directiveData.actions">\n            <a\n              class="btn btn-default margin-right-10"\n              ng-click="action.click()"\n              ng-disabled="action.disabled && action.disabled()"\n            >{{action.text}}</a>\n            <i class="fa fa-question"\n               style="color:lightgrey; cursor:pointer;padding:5px;"\n               ng-if="action.tooltip && action.disabled && action.disabled()"\n               tooltip="{{action.tooltip}}"\n            ></i>\n          </span>\n          <span>\n            <a class="btn btn-transparent" ng-click="directiveData.deselect()">Deselect All</a>\n          </span>\n        </div>\n      </div>\n    '
     };
   };
 
