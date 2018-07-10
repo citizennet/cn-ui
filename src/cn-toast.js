@@ -85,6 +85,11 @@
               ng-click="action.click()"
               ng-disabled="action.disabled && action.disabled()"
             >{{action.text}}</a>
+            <i class="fa fa-question"
+               style="color:lightgrey; cursor:pointer;padding:5px;"
+               ng-if="action.tooltip && action.disabled && action.disabled()"
+               tooltip="{{action.tooltip}}"
+            ></i>
           </span>
           <span>
             <a class="btn btn-transparent" ng-click="directiveData.deselect()">Deselect All</a>
