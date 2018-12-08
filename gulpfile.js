@@ -10,7 +10,6 @@
   const eslint = require('gulp-eslint');
   const ngAnnotate = require('gulp-ng-annotate');
   const rename = require('gulp-rename');
-  const runSequence = require('run-sequence');
   const sourcemaps = require('gulp-sourcemaps');
   const uglify = require('gulp-uglify');
 
@@ -60,18 +59,16 @@
   });
 
   // Task to run script tasks in sequence
-  gulp.task('scripts', r => {
-    runSequence('app', 'deps', 'deps-min', r);
-  });
+  gulp.task('scripts', gulp.series('app', 'deps', 'deps-min'));
 
-  gulp.task('build', ['lint', 'scripts']);
+  gulp.task('build', gulp.parallel('lint', 'scripts'));
 
   // Watch Files For Changes
   gulp.task('watch', function() {
-    gulp.watch('src/*.js', ['build']);
+    gulp.watch('src/*.js', gulp.series('build'));
   });
 
   // Default Task
-  gulp.task('default', ['build', 'watch']);
+  gulp.task('default', gulp.parallel('build', 'watch'));
 
 })();
