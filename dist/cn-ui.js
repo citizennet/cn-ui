@@ -1899,6 +1899,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
       if (_.isObject(options)) {
         options.directiveData.icon = mapType(options.directiveData.type);
+        if (Array.isArray(options.directiveData.body)) {
+          options.directiveData.body.join('<br />');
+        }
         toaster.pop(_extends({}, defaults, options));
       } else {
         toaster.pop(_extends({}, defaults, { directiveData: { body: options } }));
