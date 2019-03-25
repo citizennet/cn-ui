@@ -1900,7 +1900,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       if (_.isObject(options)) {
         options.directiveData.icon = mapType(options.directiveData.type);
         if (Array.isArray(options.directiveData.body)) {
-          options.directiveData.body.join('<br />');
+          options.directiveData.body = options.directiveData.body.join('<br />');
         }
         toaster.pop(_extends({}, defaults, options));
       } else {

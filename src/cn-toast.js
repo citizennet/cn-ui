@@ -20,7 +20,7 @@
       if (_.isObject(options)) {
         options.directiveData.icon = mapType(options.directiveData.type);
         if (Array.isArray(options.directiveData.body)) {
-          options.directiveData.body.join('<br />')
+           options.directiveData.body = options.directiveData.body.join('<br />')
         }
         toaster.pop({ ...defaults, ...options });
       } else {
