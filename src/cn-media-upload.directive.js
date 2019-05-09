@@ -40,8 +40,8 @@
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope'];
-  function Upload($q, $http, $sce, cfpLoadingBar, $scope) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
 
@@ -73,26 +73,52 @@
     function uploadFile($files) {
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
+      var file = $files[0]
+      var step = 1024 * 1024 * 25
+      var blob = file.slice()
+      var reader = new FileReader()
+      reader.readAsBinaryString(blob)
+      reader.onload = function(e) {
+        var fileHash = md5.createHash(reader.result)
+        uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash)
+      }
+      cfpLoadingBar.start();
+    }
 
+    function uploadFile_(file, start, step, dfr, uuid, fileHash) {
+      var size = file.size
+      var blob = file.slice(start, start + step)
       var formData = new FormData();
-      formData.append(vm.cnFileType, $files[0]);
-
+      formData.append("fileHash", fileHash)
+      formData.append("filename", file.name)
+      formData.append("uuid", uuid)
+      formData.append(vm.cnFileType, blob);
       _.each(vm.cnData, function(value, key) {
-        if(value) formData.append(key, value);
+        if (value) formData.append(key, value);
       });
-
+      var end = Math.min((start + step), size)
+      if (size > step) {
+        var headers = {
+          "Content-Range": `bytes ${start}-${end}/${size}`,
+          ...$http.defaults.headers.common
+        }
+      }
+      else {
+        var headers = $http.defaults.headers.common
+      }
       $.ajax({
         url: vm.cnUploadPath,
-        headers: $http.defaults.headers.common,
+        headers,
         data: formData,
         processData: false,
         contentType: false,
         type: 'POST',
-        success: dfr.resolve,
+        success: (response) => {
+          if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
+          else dfr.resolve(response)
+        },
         error: dfr.reject
-      });
-
-      cfpLoadingBar.start();
+      })
     }
 
     function setFilePath(response) {
