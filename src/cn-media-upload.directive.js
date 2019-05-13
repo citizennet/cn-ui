@@ -74,7 +74,7 @@
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0]
-      var step = 1024 * 1024 * 25
+      var step = 1024 * 1024 * 8
       var blob = file.slice()
       var reader = new FileReader()
       reader.readAsBinaryString(blob)
@@ -97,14 +97,9 @@
         if (value) formData.append(key, value);
       });
       var end = Math.min((start + step), size)
-      if (size > step) {
-        var headers = {
-          "Content-Range": `bytes ${start}-${end}/${size}`,
-          ...$http.defaults.headers.common
-        }
-      }
-      else {
-        var headers = $http.defaults.headers.common
+      var headers = {
+        "Content-Range": `bytes ${start}-${end}/${size}`,
+        ...$http.defaults.headers.common
       }
       $.ajax({
         url: vm.cnUploadPath,
@@ -114,7 +109,8 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-          if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
+	  if (response.media_object) dfr.resolve(response)
+	  else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
           else dfr.resolve(response)
         },
         error: dfr.reject

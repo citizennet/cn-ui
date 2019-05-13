@@ -1058,7 +1058,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0];
-      var step = 1024 * 1024 * 25;
+      var step = 1024 * 1024 * 8;
       var blob = file.slice();
       var reader = new FileReader();
       reader.readAsBinaryString(blob);
@@ -1081,13 +1081,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         if (value) formData.append(key, value);
       });
       var end = Math.min(start + step, size);
-      if (size > step) {
-        var headers = _extends({
-          "Content-Range": 'bytes ' + start + '-' + end + '/' + size
-        }, $http.defaults.headers.common);
-      } else {
-        var headers = $http.defaults.headers.common;
-      }
+      var headers = _extends({
+        "Content-Range": 'bytes ' + start + '-' + end + '/' + size
+      }, $http.defaults.headers.common);
       $.ajax({
         url: vm.cnUploadPath,
         headers: headers,
@@ -1096,7 +1092,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);else dfr.resolve(response);
+          if (response.media_object) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);else dfr.resolve(response);
         },
         error: dfr.reject
       });
