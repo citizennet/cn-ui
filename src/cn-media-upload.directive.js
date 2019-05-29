@@ -74,7 +74,12 @@
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0]
-      var step = 1024 * 1024 * 8
+      if (file.type.includes("image")) {
+        var step = file.size
+      }
+      else {
+        var step = 1024 * 1024 * 8
+      }
       var blob = file.slice()
       var reader = new FileReader()
       reader.readAsBinaryString(blob)
@@ -110,8 +115,8 @@
         type: 'POST',
         success: (response) => {
 	  if (response.media_object) dfr.resolve(response)
+	  else if (response.filename) dfr.resolve(response)
 	  else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
-          else dfr.resolve(response)
         },
         error: dfr.reject
       })

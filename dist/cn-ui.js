@@ -1058,7 +1058,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0];
-      var step = 1024 * 1024 * 8;
+      if (file.type.includes("image")) {
+        var step = file.size;
+      } else {
+        var step = 1024 * 1024 * 8;
+      }
       var blob = file.slice();
       var reader = new FileReader();
       reader.readAsBinaryString(blob);
@@ -1092,7 +1096,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);else dfr.resolve(response);
+          if (response.media_object) dfr.resolve(response);else if (response.filename) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);
         },
         error: dfr.reject
       });
