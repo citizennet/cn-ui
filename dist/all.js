@@ -1096,7 +1096,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object) dfr.resolve(response);else if (response.filename) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);
+          if (response.media_object) dfr.resolve(response);else if (response.filename) dfr.resolve(response);else if (response.cn_preview_url) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);
         },
         error: dfr.reject
       });
