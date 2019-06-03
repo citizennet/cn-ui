@@ -116,6 +116,7 @@
         success: (response) => {
 	  if (response.media_object) dfr.resolve(response)
 	  else if (response.filename) dfr.resolve(response)
+	  else if (response.cn_preview_url) dfr.resolve(response)
 	  else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
         },
         error: dfr.reject
