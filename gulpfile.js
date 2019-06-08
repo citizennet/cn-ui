@@ -43,7 +43,10 @@
     return gulp
         .src(['dist/cn-ui.min.js',
           'bower_components/ng-file-upload/angular-file-upload.min.js',
-          'bower_components/angularjs-toaster/toaster.min.js'])
+          'bower_components/angularjs-toaster/toaster.min.js',
+          'bower_components/angular-md5/angular-md5.min.js',
+          'bower_components/angular-uuid4/angular-uuid4.min.js'
+        ])
         .pipe(concat('all.min.js'))
         .pipe(gulp.dest('dist'));
   });
@@ -52,7 +55,9 @@
     return gulp
         .src(['dist/cn-ui.js',
           'bower_components/ng-file-upload/angular-file-upload.js',
-          'bower_components/angularjs-toaster/toaster.js'
+          'bower_components/angularjs-toaster/toaster.js',
+          'bower_components/angular-md5/angular-md5.js',
+          'bower_components/angular-uuid4/angular-uuid4.js'
         ])
         .pipe(concat('all.js'))
         .pipe(gulp.dest('dist'));
