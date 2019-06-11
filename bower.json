@@ -2,6 +2,8 @@
   "name": "cn-ui",
   "dependencies": {
     "ng-file-upload": "1.4.0",
-    "angularjs-toaster": "git@github.com:citizennet/AngularJS-Toaster.git#master"
+    "angularjs-toaster": "git@github.com:citizennet/AngularJS-Toaster.git#master",
+    "angular-md5": "^0.1.10",
+    "angular-uuid4": "^0.3.1"
   }
 }
