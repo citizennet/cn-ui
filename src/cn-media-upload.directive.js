@@ -62,12 +62,14 @@
     }
 
     function updatePreview() {
+      console.log('Update preview');
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }
       else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
         vm.filePath = $sce.trustAsResourceUrl(_.get(vm.cnImagePreviews, vm.cnKey));
       }
+      console.log('after update', vm);
     }
 
     function uploadFile($files) {
