@@ -79,11 +79,11 @@
       console.log('file.type', file.type);
       if (file.type.includes("image")) {
         var step = file.size
-        vm.cnFileType = "image"
+        vm.cnFileType = "image";
       }
       else {
         var step = 1024 * 1024 * 8
-        vm.cnFileType = "video"
+        vm.cnFileType = "video";
       }
       var blob = file.slice()
       var reader = new FileReader()
