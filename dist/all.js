@@ -1068,6 +1068,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         var step = 1024 * 1024 * 8;
         vm.cnFileType = "video";
       }
+      console.log("FileType", vm.cnFileType);
       var blob = file.slice();
       var reader = new FileReader();
       reader.readAsBinaryString(blob);
