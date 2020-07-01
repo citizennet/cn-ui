@@ -74,6 +74,7 @@
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0]
+      console.log('file.type', file.type);
       if (file.type.includes("image")) {
         var step = file.size
       }
@@ -94,11 +95,12 @@
       var size = file.size
       var blob = file.slice(start, start + step)
       var formData = new FormData();
-      formData.append("fileHash", fileHash)
-      formData.append("filename", file.name)
-      formData.append("uuid", uuid)
-      formData.append(vm.cnFileType, blob);
+      // formData.append("fileHash", fileHash)
+      // formData.append("filename", file.name)
+      // formData.append("uuid", uuid)
+      // formData.append(vm.cnFileType, blob);
 
+      console.log('File size:', file.size);
       formData.append("content_hash", fileHash)
       formData.append("file", blob);
       _.each(vm.cnData, function(value, key) {
@@ -117,10 +119,11 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-	  if (response.media_object) dfr.resolve(response)
-	  else if (response.filename) dfr.resolve(response)
-	  else if (response.cn_preview_url) dfr.resolve(response)
-	  else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
+          console.log('response', response);
+	        if (response.media_object) dfr.resolve(response)
+	        else if (response.filename) dfr.resolve(response)
+	        else if (response.cn_preview_url) dfr.resolve(response)
+	        else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
         },
         error: dfr.reject
       })
