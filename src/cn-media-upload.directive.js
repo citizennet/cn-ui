@@ -32,7 +32,7 @@
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     btn-text="Upload {{vm.cnFileType !== \"any\" ? (vm.cnFileType | titleCase) : \"\"}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
@@ -62,21 +62,18 @@
     }
 
     function updatePreview() {
-      console.log('Update preview');
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }
       else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
         vm.filePath = $sce.trustAsResourceUrl(_.get(vm.cnImagePreviews, vm.cnKey));
       }
-      console.log('after update', vm);
     }
 
     function uploadFile($files) {
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0]
-      console.log('file.type', file.type);
       if (file.type.includes("image")) {
         var step = file.size
         vm.cnFileType = "image";
@@ -85,7 +82,6 @@
         var step = 1024 * 1024 * 8
         vm.cnFileType = "video";
       }
-      console.log("FileType", vm.cnFileType);
       var blob = file.slice()
       var reader = new FileReader()
       reader.readAsBinaryString(blob)
@@ -126,8 +122,6 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-          console.log('response', response);
-          console.log('response', response.media_object || response.filename || response.cn_preview_url || response.media_url);
 	        if (response.media_object || response.filename || response.cn_preview_url || response.media_url)  {
             dfr.resolve(response)
           } else if (start + step < size) {
@@ -139,7 +133,6 @@
     }
 
     function setFilePath(response) {
-      console.log('setFilePath');
       cfpLoadingBar.complete();
       if (vm.cnImagePreviews) {
         delete vm.cnImagePreviews[vm.cnKey];
@@ -153,7 +146,6 @@
           ngModelController.$setValidity(e, true);
         });
       }
-      console.log('vm', vm);
     }
 
     function handleError(err) {
