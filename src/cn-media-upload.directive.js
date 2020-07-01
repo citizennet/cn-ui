@@ -33,13 +33,15 @@
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="{{ vm.cnTextButton ? cnTextButton : (\"Upload \" +  vm.cnFileType) | titleCase }}"\
+                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
       '
     };
   }
+
+  // btn-text="{{ vm.cnTextButton ? cnTextButton : (\'Upload\' +  vm.cnFileType) | titleCase }}"\
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
