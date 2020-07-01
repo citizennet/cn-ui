@@ -146,6 +146,7 @@
           ngModelController.$setValidity(e, true);
         });
       }
+      console.log('vm', vm);
     }
 
     function handleError(err) {

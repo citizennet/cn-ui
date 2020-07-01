@@ -1128,6 +1128,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
           ngModelController.$setValidity(e, true);
         });
       }
+      console.log('vm', vm);
     }
 
     function handleError(err) {
