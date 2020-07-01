@@ -124,6 +124,7 @@
         type: 'POST',
         success: (response) => {
           console.log('response', response);
+          console.log('response', response.media_object || response.filename || response.cn_preview_url || response.media_url);
 	        if (response.media_object || response.filename || response.cn_preview_url || response.media_url)  {
             dfr.resolve(response)
           } else if (start + step < size) {
@@ -135,6 +136,7 @@
     }
 
     function setFilePath(response) {
+      console.log('setFilePath');
       cfpLoadingBar.complete();
       if (vm.cnImagePreviews) {
         delete vm.cnImagePreviews[vm.cnKey];
