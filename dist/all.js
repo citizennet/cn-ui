@@ -1017,7 +1017,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="Upload {{vm.uploadPath.includes(\"/media/upload\") ? \"\" : (vm.cnFileType | titleCase)}}"\
+                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
