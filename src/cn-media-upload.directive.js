@@ -95,6 +95,7 @@
       var blob = file.slice(start, start + step)
       var formData = new FormData();
       formData.append("fileHash", fileHash)
+      formData.append("content_hash", fileHash)
       formData.append("filename", file.name)
       formData.append("uuid", uuid)
       formData.append(vm.cnFileType, blob);

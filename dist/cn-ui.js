@@ -1078,6 +1078,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var blob = file.slice(start, start + step);
       var formData = new FormData();
       formData.append("fileHash", fileHash);
+      formData.append("content_hash", fileHash);
       formData.append("filename", file.name);
       formData.append("uuid", uuid);
       formData.append(vm.cnFileType, blob);
@@ -1107,6 +1108,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       if (vm.cnImagePreviews) {
         delete vm.cnImagePreviews[vm.cnKey];
       }
+      vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
       var ngModelController = getNgModelController($scope);
