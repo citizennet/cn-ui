@@ -1063,8 +1063,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       console.log('file.type', file.type);
       if (file.type.includes("image")) {
         var step = file.size;
+        vm.cnFileType = "image";
       } else {
         var step = 1024 * 1024 * 8;
+        vm.cnFileType = "video";
       }
       var blob = file.slice();
       var reader = new FileReader();
