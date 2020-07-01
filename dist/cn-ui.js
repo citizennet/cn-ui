@@ -1078,14 +1078,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var size = file.size;
       var blob = file.slice(start, start + step);
       var formData = new FormData();
-      // formData.append("fileHash", fileHash)
-      // formData.append("filename", file.name)
-      // formData.append("uuid", uuid)
-      // formData.append(vm.cnFileType, blob);
+      if (vm.cnUploadPath.includes('/media/upload')) {
+        formData.append("content_hash", fileHash);
+        formData.append("file", blob);
+      } else {
+        formData.append("fileHash", fileHash);
+        formData.append("filename", file.name);
+        formData.append("uuid", uuid);
+        formData.append(vm.cnFileType, blob);
+      }
 
-      console.log('File size:', file.size);
-      formData.append("content_hash", fileHash);
-      formData.append("file", blob);
       _.each(vm.cnData, function (value, key) {
         if (value) formData.append(key, value);
       });
@@ -1102,7 +1104,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         type: 'POST',
         success: function success(response) {
           console.log('response', response);
-          if (response.media_object) dfr.resolve(response);else if (response.filename) dfr.resolve(response);else if (response.cn_preview_url) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);
+          if (response.media_object || response.filename || response.cn_preview_url || response.media_url) {
+            dfr.resolve(response);
+          } else if (start + step < size) {
+            uploadFile_(file, start + step, step, dfr, uuid, fileHash);
+          }
         },
         error: dfr.reject
       });
