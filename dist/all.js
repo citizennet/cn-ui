@@ -1004,7 +1004,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         cnForm: '=',
         cnData: '=',
         cnKey: '=',
-        cnImagePreviews: '='
+        cnImagePreviews: '=',
+        cnTextButton: '='
       },
       controller: Upload,
       controllerAs: 'vm',
@@ -1017,7 +1018,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     btn-text="{{ vm.cnTextButton ? cnTextButton : (\"Upload \" +  vm.cnFileType) | titleCase }}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
