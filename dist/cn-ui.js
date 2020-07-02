@@ -1018,7 +1018,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="{{ vm.cnTextButton ? vm.cnTextButton : \"Upload \" +  (vm.cnFileType | titleCase)}}"\
+                     btn-text="{{ vm.cnTextButton ? vm.cnTextButton : (vm.cnFileType | titleCase)}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
