@@ -52,6 +52,8 @@
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
+    console.log('vm.cnTextButton', vm.cnTextButton);
+    console.log('cnTextButton', cnTextButton);
     activate();
 
     function activate() {
