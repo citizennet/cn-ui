@@ -1030,9 +1030,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
-    console.log('vm.cnTextButton', vm.cnTextButton);
-    console.log('cnTextButton', cnTextButton);
-
+    console.log('this', this);
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
 
