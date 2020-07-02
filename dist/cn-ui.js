@@ -1018,7 +1018,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="{{ vm.cnTextButton != undefined ? cnTextButton : (\'Upload \' +  (vm.cnFileType | titleCase))}}"\
+                     btn-text="{{ vm.cnTextButton != undefined ? vm.cnTextButton : (\'Upload \' +  (vm.cnFileType | titleCase))}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
@@ -1028,13 +1028,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
-    console.log('vm.cnTextButton', vm.cnTextButton);
-    console.log('cnTextButton', cnTextButton);
 
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
 
     var vm = this;
+    console.log(vm.cnTextButton != undefined ? vm.cnTextButton : 'Upload ' + vm.cnFileType);
+    console.log(vm.cnTextButton != undefined);
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
