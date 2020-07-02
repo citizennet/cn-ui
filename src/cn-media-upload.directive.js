@@ -33,7 +33,7 @@
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="{{ vm.cnTextButton ? vm.cnTextButton : (vm.cnFileType | titleCase)}}"\
+                     btn-text="{{ vm.cnTextButton != undefined ? vm.cnTextButton : (vm.cnFileType | titleCase)}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
