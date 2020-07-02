@@ -1039,14 +1039,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     activate();
 
     function activate() {
-      if (vm.cnUploadPath.includes('/media/upload')) {
+      console.log('vm1', vm);
+      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
         var videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         var imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
         var url = new URL(vm.ngModel);
         var extension = url.pathname.split(".")[1].toLowerCase();
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
-      console.log('vm', vm);
+      console.log('vm2', vm);
       console.log('vm.cnFileType === image', vm.cnFileType === 'image', vm.cnFileType === 'image' && vm.ngModel);
       console.log('vm.cnFileType === video', vm.cnFileType === 'video', vm.cnFileType === 'video' && vm.ngModel, vm.ngModel.media);
       if (vm.cnExistingPreview) {

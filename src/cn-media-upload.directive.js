@@ -54,14 +54,15 @@
     activate();
 
     function activate() {
-      if (vm.cnUploadPath.includes('/media/upload')) {
+      console.log('vm1', vm);
+      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
         const videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         const imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
         const url = new URL(vm.ngModel);
         const extension = url.pathname.split(".")[1].toLowerCase();
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
-      console.log('vm', vm);
+      console.log('vm2', vm);
       console.log('vm.cnFileType === image', vm.cnFileType === 'image', vm.cnFileType === 'image' && vm.ngModel);
       console.log('vm.cnFileType === video', vm.cnFileType === 'video', vm.cnFileType === 'video' && vm.ngModel, vm.ngModel.media);
       if (vm.cnExistingPreview) {
