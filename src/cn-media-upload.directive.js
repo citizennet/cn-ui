@@ -48,14 +48,13 @@
     $scope.__tag = new mediaUploadTag();
 
     var vm = this;
-    console.log(vm.cnTextButton != undefined ? vm.cnTextButton : ('Upload ' +  vm.cnFileType));
-    console.log(vm.cnTextButton != undefined);
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
     activate();
 
     function activate() {
+      console.log('vm', vm);
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl(`/uploads/facebook/${vm.cnExistingPreview}`);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
