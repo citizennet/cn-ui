@@ -1040,19 +1040,25 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
     function activate() {
       if (vm.cnUploadPath.includes('/media/upload')) {
-        var videoExtensions = ['.mkv', '.flv', '.gif', '.avi', '.mov', '.mp4', '.m4p', '.mpeg', '.mpg'];
-        var imgExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tiff', '.raw', '.heic', '.svg', '.eps'];
+        var videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
+        var imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
         var url = new URL(vm.ngModel);
         var extension = url.pathname.split(".")[1].toLowerCase();
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
       console.log('vm', vm);
+      console.log('vm.cnFileType === image', vm.cnFileType === 'image', vm.cnFileType === 'image' && vm.ngModel);
+      console.log('vm.cnFileType === video', vm.cnFileType === 'video', vm.cnFileType === 'video' && vm.ngModel, vm.ngModel.media);
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl('/uploads/facebook/' + vm.cnExistingPreview);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
-        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        if (vm.ngModel.media) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+        }
       }
     }
 
