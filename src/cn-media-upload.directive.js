@@ -19,7 +19,8 @@
         cnForm: '=',
         cnData: '=',
         cnKey: '=',
-        cnImagePreviews: '='
+        cnImagePreviews: '=',
+        cnTextButton: '='
       },
       controller: Upload,
       controllerAs: 'vm',
@@ -32,7 +33,7 @@
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     btn-text="{{ vm.cnTextButton != undefined ? vm.cnTextButton : (\'Upload \' +  (vm.cnFileType | titleCase))}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
@@ -42,6 +43,7 @@
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
+
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
 
@@ -52,12 +54,24 @@
     activate();
 
     function activate() {
+      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
+        const videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
+        const imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
+        const url = new URL(vm.ngModel);
+        const extension = url.pathname.split(".")[1].toLowerCase();
+        vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
+      }
+
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl(`/uploads/facebook/${vm.cnExistingPreview}`);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
-        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        if (vm.ngModel.media) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+        }
       }
     }
 
@@ -76,9 +90,11 @@
       var file = $files[0]
       if (file.type.includes("image")) {
         var step = file.size
+        vm.cnFileType = "image";
       }
       else {
         var step = 1024 * 1024 * 8
+        vm.cnFileType = "video";
       }
       var blob = file.slice()
       var reader = new FileReader()
@@ -94,10 +110,16 @@
       var size = file.size
       var blob = file.slice(start, start + step)
       var formData = new FormData();
-      formData.append("fileHash", fileHash)
-      formData.append("filename", file.name)
-      formData.append("uuid", uuid)
-      formData.append(vm.cnFileType, blob);
+      if (vm.cnUploadPath.includes('/media/upload')) {
+        formData.append("content_hash", fileHash)
+        formData.append("file", blob);
+      } else {
+        formData.append("fileHash", fileHash)
+        formData.append("filename", file.name)
+        formData.append("uuid", uuid)
+        formData.append(vm.cnFileType, blob);
+      }
+
       _.each(vm.cnData, function(value, key) {
         if (value) formData.append(key, value);
       });
@@ -114,10 +136,11 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-	  if (response.media_object) dfr.resolve(response)
-	  else if (response.filename) dfr.resolve(response)
-	  else if (response.cn_preview_url) dfr.resolve(response)
-	  else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash)
+	        if (response.media_object || response.filename || response.cn_preview_url || response.media_url)  {
+            dfr.resolve(response)
+          } else if (start + step < size) {
+            uploadFile_(file, start + step, step, dfr, uuid, fileHash)
+          }
         },
         error: dfr.reject
       })
