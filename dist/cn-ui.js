@@ -1004,7 +1004,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         cnForm: '=',
         cnData: '=',
         cnKey: '=',
-        cnImagePreviews: '='
+        cnImagePreviews: '=',
+        cnTextButton: '='
       },
       controller: Upload,
       controllerAs: 'vm',
@@ -1017,7 +1018,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                  controls="controls" preload="none"/>\
         </div>\
         <file-upload class="col-sm-6"\
-                     btn-text="Upload {{vm.cnFileType | titleCase}}"\
+                     btn-text="{{ vm.cnTextButton != undefined ? vm.cnTextButton : (\'Upload \' +  (vm.cnFileType | titleCase))}}"\
                      cn-disabled="vm.cnDisabled"\
                      on-file-select="vm.uploadFile($files)">\
         </file-upload>\
@@ -1027,6 +1028,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
   Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
   function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
+
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
 
@@ -1037,12 +1039,24 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     activate();
 
     function activate() {
+      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
+        var videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
+        var imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
+        var url = new URL(vm.ngModel);
+        var extension = url.pathname.split(".")[1].toLowerCase();
+        vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
+      }
+
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl('/uploads/facebook/' + vm.cnExistingPreview);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
-        vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        if (vm.ngModel.media) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+        }
       }
     }
 
@@ -1060,8 +1074,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var file = $files[0];
       if (file.type.includes("image")) {
         var step = file.size;
+        vm.cnFileType = "image";
       } else {
         var step = 1024 * 1024 * 8;
+        vm.cnFileType = "video";
       }
       var blob = file.slice();
       var reader = new FileReader();
@@ -1077,10 +1093,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var size = file.size;
       var blob = file.slice(start, start + step);
       var formData = new FormData();
-      formData.append("fileHash", fileHash);
-      formData.append("filename", file.name);
-      formData.append("uuid", uuid);
-      formData.append(vm.cnFileType, blob);
+      if (vm.cnUploadPath.includes('/media/upload')) {
+        formData.append("content_hash", fileHash);
+        formData.append("file", blob);
+      } else {
+        formData.append("fileHash", fileHash);
+        formData.append("filename", file.name);
+        formData.append("uuid", uuid);
+        formData.append(vm.cnFileType, blob);
+      }
+
       _.each(vm.cnData, function (value, key) {
         if (value) formData.append(key, value);
       });
@@ -1096,7 +1118,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object) dfr.resolve(response);else if (response.filename) dfr.resolve(response);else if (response.cn_preview_url) dfr.resolve(response);else if (start + step < size) uploadFile_(file, start + step, step, dfr, uuid, fileHash);
+          if (response.media_object || response.filename || response.cn_preview_url || response.media_url) {
+            dfr.resolve(response);
+          } else if (start + step < size) {
+            uploadFile_(file, start + step, step, dfr, uuid, fileHash);
+          }
         },
         error: dfr.reject
       });
@@ -1107,6 +1133,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       if (vm.cnImagePreviews) {
         delete vm.cnImagePreviews[vm.cnKey];
       }
+      vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
       var ngModelController = getNgModelController($scope);
