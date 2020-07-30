@@ -110,7 +110,7 @@
       var size = file.size
       var blob = file.slice(start, start + step)
       var formData = new FormData();
-      if (vm.cnUploadPath.includes('/media/upload')) {
+      if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash)
         formData.append("file", blob);
       } else {
