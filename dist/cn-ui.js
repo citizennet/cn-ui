@@ -1047,6 +1047,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
 
+      console.log(vm);
+
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl('/uploads/facebook/' + vm.cnExistingPreview);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
