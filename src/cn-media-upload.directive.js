@@ -54,7 +54,7 @@
     activate();
 
     function activate() {
-      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
+      if (vm.cnUploadPath.includes('api/v2/media/upload') && vm.ngModel) {
         const videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         const imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
         const url = new URL(vm.ngModel);
