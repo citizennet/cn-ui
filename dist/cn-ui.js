@@ -1039,7 +1039,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     activate();
 
     function activate() {
-      if (vm.cnUploadPath.includes('/media/upload') && vm.ngModel) {
+      if (vm.cnUploadPath.includes('api/v2/media/upload') && vm.ngModel) {
         var videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         var imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
         var url = new URL(vm.ngModel);
@@ -1093,7 +1093,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var size = file.size;
       var blob = file.slice(start, start + step);
       var formData = new FormData();
-      if (vm.cnUploadPath.includes('/media/upload')) {
+      if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash);
         formData.append("file", blob);
       } else {
