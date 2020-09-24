@@ -1036,6 +1036,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
     vm.uploadFile = uploadFile;
     $scope.$watch('vm.ngModel', updatePreview);
+
+    console.log('vm', vm);
+
     activate();
 
     function activate() {
