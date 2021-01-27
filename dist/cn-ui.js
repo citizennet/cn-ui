@@ -1052,7 +1052,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
-        console.log('ngModel', vm.ngModel);
         if (vm.ngModel.media) {
           vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
         } else if (vm.ngModel.video_url) {
