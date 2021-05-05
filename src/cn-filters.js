@@ -27,7 +27,7 @@
           // No substring matching against `undefined`
           return false;
         }
-        if (actual.toString().startsWith('_uniqueid')) {
+        if (actual.toString().startsWith('__uniqueid')) {
           return false;
         }
         if ((actual === null) || (expected === null)) {
