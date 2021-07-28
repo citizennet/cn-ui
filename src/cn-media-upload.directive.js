@@ -89,20 +89,19 @@
     function uploadFile($files) {
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
-      var file = $files[0]
+      var file = $files[0];
       if (file.type.includes("image")) {
-        var step = file.size
+        var step = file.size;
         vm.cnFileType = "image";
       }
       else {
-        var step = 1024 * 1024 * 8
+        var step = 1024 * 1024 * 8;
         vm.cnFileType = "video";
       }
-      var blob = file.slice()
-      var reader = new FileReader()
-      reader.readAsBinaryString(blob)
+      var reader = new FileReader();
+      reader.readAsArrayBuffer(file);
       reader.onload = function(e) {
-        var fileHash = md5.createHash(reader.result)
+        var fileHash = SparkMD5.ArrayBuffer.hash(e.target.result);
         uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash)
       }
       cfpLoadingBar.start();
