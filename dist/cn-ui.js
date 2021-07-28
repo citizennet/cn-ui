@@ -1084,10 +1084,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         var step = 1024 * 1024 * 8;
         vm.cnFileType = "video";
       }
+      var blob = file.slice();
       var reader = new FileReader();
-      reader.readAsArrayBuffer(file);
+      reader.readAsBinaryString(blob);
       reader.onload = function (e) {
-        var fileHash = SparkMD5.ArrayBuffer.hash(e.target.result);
+        var fileHash = md5.createHash(reader.result);
         uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash);
       };
       cfpLoadingBar.start();
