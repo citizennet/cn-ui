@@ -98,11 +98,10 @@
         var step = 1024 * 1024 * 8
         vm.cnFileType = "video";
       }
-      var blob = file.slice()
       var reader = new FileReader()
-      reader.readAsBinaryString(blob)
+      reader.readAsArrayBuffer(file)
       reader.onload = function(e) {
-        var fileHash = md5.createHash(reader.result)
+        var fileHash = SparkMD5.ArrayBuffer.hash(e.target.result);
         uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash)
       }
       cfpLoadingBar.start();
