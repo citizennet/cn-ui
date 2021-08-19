@@ -1081,7 +1081,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         var step = file.size;
         vm.cnFileType = "image";
       } else {
-        var step = 1024 * 1024 * 8;
+        var step = 1024 * 1024 * 2;
         vm.cnFileType = "video";
       }
       var reader = new FileReader();
@@ -1122,7 +1122,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object || response.filename || response.cn_preview_url || response.media_url) {
+          if (response.media_object || response.cn_preview_url || response.media_url) {
             dfr.resolve(response);
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash);
