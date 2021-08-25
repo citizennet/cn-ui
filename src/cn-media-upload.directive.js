@@ -91,12 +91,19 @@
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0];
       if (file.type.includes("image")) {
-        var step = file.size;
         vm.cnFileType = "image";
+      }
+      else if (file.type.includes("video")) {
+        vm.cnFileType = "video";
+      }
+      else {
+        vm.cnFileType = file.type.slice(0, file.type.indexOf('/'));
+      }
+      if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
+        var step = file.size;
       }
       else {
         var step = 1024 * 1024 * 2;
-        vm.cnFileType = "video";
       }
       var reader = new FileReader();
       reader.readAsArrayBuffer(file);
@@ -111,6 +118,7 @@
       var size = file.size
       var blob = file.slice(start, start + step)
       var formData = new FormData();
+      formData.append("mediaType", file.type)
       if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash)
         formData.append("file", blob);
