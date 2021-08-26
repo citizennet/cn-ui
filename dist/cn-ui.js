@@ -1078,11 +1078,16 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0];
       if (file.type.includes("image")) {
-        var step = file.size;
         vm.cnFileType = "image";
-      } else {
-        var step = 1024 * 1024 * 8;
+      } else if (file.type.includes("video")) {
         vm.cnFileType = "video";
+      } else {
+        vm.cnFileType = file.type.slice(0, file.type.indexOf('/'));
+      }
+      if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
+        var step = file.size;
+      } else {
+        var step = 1024 * 1024 * 2;
       }
       var reader = new FileReader();
       reader.readAsArrayBuffer(file);
@@ -1097,6 +1102,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var size = file.size;
       var blob = file.slice(start, start + step);
       var formData = new FormData();
+      formData.append("mediaType", file.type);
       if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash);
         formData.append("file", blob);
@@ -1122,7 +1128,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object || response.filename || response.cn_preview_url || response.media_url) {
+          if (response.media_object || response.cn_preview_url || response.media_url) {
             dfr.resolve(response);
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash);
