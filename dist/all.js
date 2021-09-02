@@ -1128,7 +1128,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object || response.cn_preview_url || response.media_url) {
+          if (response.media_object || response.cn_preview_url || response.media_url || response.path) {
             dfr.resolve(response);
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash);
@@ -3755,7 +3755,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         return {
             buff: this._buff,
             length: this._length,
-            hash: this._hash.slice()
+            hash: this._hash
         };
     };
 
@@ -3821,7 +3821,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * A conversion will be applied if utf8 string is detected.
      *
      * @param {String}  str The string
-     * @param {Boolean} [raw] True to get the raw string, false to get the hex string
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
      *
      * @return {String} The result
      */
@@ -3835,7 +3835,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * Performs the md5 hash on a binary string.
      *
      * @param {String}  content The binary string
-     * @param {Boolean} [raw]     True to get the raw string, false to get the hex string
+     * @param {Boolean} raw     True to get the raw string, false to get the hex string
      *
      * @return {String} The result
      */
@@ -3961,7 +3961,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * Performs the md5 hash on an array buffer.
      *
      * @param {ArrayBuffer} arr The array buffer
-     * @param {Boolean}     [raw] True to get the raw string, false to get the hex one
+     * @param {Boolean}     raw True to get the raw string, false to get the hex one
      *
      * @return {String} The result
      */

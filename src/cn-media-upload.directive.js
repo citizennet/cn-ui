@@ -145,7 +145,7 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-	        if (response.media_object || response.cn_preview_url || response.media_url)  {
+	        if (response.media_object || response.cn_preview_url || response.media_url || response.path)  {
             dfr.resolve(response)
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash)
