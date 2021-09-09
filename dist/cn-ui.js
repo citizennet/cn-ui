@@ -444,11 +444,11 @@
 
       function formatVal(val) {
         if (!val) val = '';else if (format === 'cents') {
-          val = _.floor(val / 100, 2) || '';
+          val = _.round(val / 100, 2) || '';
         } else if (format === 'microcents') {
-          val = _.floor(val / 1000000, 2) || '';
+          val = _.round(val / 1000000, 2) || '';
         } else {
-          val = _.floor(val, 2) || '';
+          val = _.round(val, 2) || '';
         }
         return (/\.\d$/.test(val) ? val + '0' : val
         );

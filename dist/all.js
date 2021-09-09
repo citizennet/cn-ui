@@ -444,11 +444,11 @@
 
       function formatVal(val) {
         if (!val) val = '';else if (format === 'cents') {
-          val = _.floor(val / 100, 2) || '';
+          val = _.round(val / 100, 2) || '';
         } else if (format === 'microcents') {
-          val = _.floor(val / 1000000, 2) || '';
+          val = _.round(val / 1000000, 2) || '';
         } else {
-          val = _.floor(val, 2) || '';
+          val = _.round(val, 2) || '';
         }
         return (/\.\d$/.test(val) ? val + '0' : val
         );
@@ -3755,7 +3755,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         return {
             buff: this._buff,
             length: this._length,
-            hash: this._hash
+            hash: this._hash.slice()
         };
     };
 
@@ -3821,7 +3821,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * A conversion will be applied if utf8 string is detected.
      *
      * @param {String}  str The string
-     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     * @param {Boolean} [raw] True to get the raw string, false to get the hex string
      *
      * @return {String} The result
      */
@@ -3835,7 +3835,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * Performs the md5 hash on a binary string.
      *
      * @param {String}  content The binary string
-     * @param {Boolean} raw     True to get the raw string, false to get the hex string
+     * @param {Boolean} [raw]     True to get the raw string, false to get the hex string
      *
      * @return {String} The result
      */
@@ -3961,7 +3961,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
      * Performs the md5 hash on an array buffer.
      *
      * @param {ArrayBuffer} arr The array buffer
-     * @param {Boolean}     raw True to get the raw string, false to get the hex one
+     * @param {Boolean}     [raw] True to get the raw string, false to get the hex one
      *
      * @return {String} The result
      */
