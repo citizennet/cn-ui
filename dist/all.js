@@ -1029,8 +1029,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4', 'EVENTS'];
-  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4, EVENTS) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
 
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();

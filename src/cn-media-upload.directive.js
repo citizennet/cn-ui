@@ -41,8 +41,8 @@
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4', 'EVENTS'];
-  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4, EVENTS) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
 
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
