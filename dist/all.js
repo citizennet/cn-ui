@@ -1086,7 +1086,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       }
       if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
         var step = file.size;
-        console.log(step, 1024 * 1024 * 50);
         if (step > 1024 * 1024 * 50) {
           var msg = 'The image you are trying to upload is too big. The max size is 50 MB';
           dfr.reject({ responseText: JSON.stringify({ error: msg }) });
