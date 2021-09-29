@@ -41,8 +41,8 @@
     };
   }
 
-  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4'];
-  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4) {
+  Upload.$inject = ['$q', '$http', '$sce', 'cfpLoadingBar', '$scope', 'md5', 'uuid4', 'EVENTS'];
+  function Upload($q, $http, $sce, cfpLoadingBar, $scope, md5, uuid4, EVENTS) {
 
     function mediaUploadTag() {}
     $scope.__tag = new mediaUploadTag();
@@ -101,6 +101,11 @@
       }
       if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
         var step = file.size;
+        console.log(step, 1024 * 1024 * 50)
+        if (step > 1024 * 1024 * 50) {
+          let msg = 'The image you are trying to upload is too big. The max size is 50 MB';
+					dfr.reject({ responseText: JSON.stringify({ error: msg }) });
+        }
       }
       else {
         var step = 1024 * 1024 * 2;
