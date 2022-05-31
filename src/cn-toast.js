@@ -13,7 +13,7 @@
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a>Dismiss</a>'
+      closeHtml: '<a tabindex="0">Dismiss</a>'
     };
 
     const rslistener = $rootScope.$on("citizenNet:toastEvent", function(event, options) {
