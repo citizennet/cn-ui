@@ -168,7 +168,7 @@
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
       
-      $scope.$emit("cnMediaUpload.uploaded", {cn_preview_url: response['cn_preview_url'], media_key: vm.ngModel});
+      $scope.$emit("cnMediaUpload.uploaded", {cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: vm.ngModel});
 
       let ngModelController = getNgModelController($scope);
       if (ngModelController) {
