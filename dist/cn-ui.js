@@ -1962,7 +1962,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a tabindex="0">Dismiss</a>'
+      closeHtml: '<a>Dismiss</a>'
     };
 
     var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
