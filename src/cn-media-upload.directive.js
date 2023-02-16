@@ -54,6 +54,7 @@
     activate();
 
     function activate() {
+      console.log("activate!");
       if (vm.cnUploadPath.includes('api/v2/media/upload') && vm.ngModel) {
         const videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         const imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
@@ -62,6 +63,10 @@
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
 
+      console.log("vm.cnFileType: ", vm.cnFileType);
+      console.log("vm.cnExistingPreview: ", vm.cnExistingPreview);
+      console.log("vm.ngModel: ", vm.ngModel);
+      console.log("vm.ngModel.media: ", vm.ngModel.media);
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl(`/uploads/facebook/${vm.cnExistingPreview}`);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
@@ -78,6 +83,9 @@
     }
 
     function updatePreview() {
+      console.log("updatePreview!");
+      console.log("vm.ngModel: ", vm.ngModel);
+      console.log("vm.cnImagePreviews: ", vm.cnImagePreviews);
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       }

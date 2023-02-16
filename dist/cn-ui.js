@@ -1042,6 +1042,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     activate();
 
     function activate() {
+      console.log("activate!");
       if (vm.cnUploadPath.includes('api/v2/media/upload') && vm.ngModel) {
         var videoExtensions = ['mkv', 'flv', 'gif', 'avi', 'mov', 'mp4', 'm4p', 'mpeg', 'mpg'];
         var imgExtensions = ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'raw', 'heic', 'svg', 'eps'];
@@ -1050,6 +1051,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
 
+      console.log("vm.cnFileType: ", vm.cnFileType);
+      console.log("vm.cnExistingPreview: ", vm.cnExistingPreview);
+      console.log("vm.ngModel: ", vm.ngModel);
+      console.log("vm.ngModel.media: ", vm.ngModel.media);
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl('/uploads/facebook/' + vm.cnExistingPreview);
       } else if (vm.cnFileType === 'image' && vm.ngModel) {
@@ -1066,6 +1071,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     }
 
     function updatePreview() {
+      console.log("updatePreview!");
+      console.log("vm.ngModel: ", vm.ngModel);
+      console.log("vm.cnImagePreviews: ", vm.cnImagePreviews);
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
@@ -1966,7 +1974,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a tabindex="0">Dismiss</a>'
+      closeHtml: '<a>Dismiss</a>'
     };
 
     var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
