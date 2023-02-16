@@ -1041,7 +1041,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     $scope.$watch('vm.ngModel', updatePreview);
     activate();
     console.log("vm: ", vm);
-    console.log("$scope: ", $scope);
 
     function activate() {
       console.log("activate!");
@@ -1053,8 +1052,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         vm.cnFileType = imgExtensions.includes(extension) ? 'image' : 'video';
       }
 
-      console.log("vm.cnFileType: ", vm.cnFileType);
-      console.log("vm.cnExistingPreview: ", vm.cnExistingPreview);
       console.log("vm.ngModel: ", vm.ngModel);
       if (vm.cnExistingPreview) {
         vm.filePath = $sce.trustAsResourceUrl('/uploads/facebook/' + vm.cnExistingPreview);
@@ -1072,9 +1069,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     }
 
     function updatePreview() {
-      console.log("updatePreview!");
-      console.log("vm.ngModel: ", vm.ngModel);
-      console.log("vm.cnImagePreviews: ", vm.cnImagePreviews);
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
       } else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
@@ -1160,9 +1154,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       }
       vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
-      console.log("vm.cnPreviewPath: ", vm.cnPreviewPath);
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
-      console.log("vm.filePath: ", vm.filePath);
 
       $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: vm.ngModel });
 
