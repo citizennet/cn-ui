@@ -1143,13 +1143,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     }
 
     function setFilePath(response) {
+      console.log("setFilePath");
+      console.log("response: ", response);
       cfpLoadingBar.complete();
       if (vm.cnImagePreviews) {
         delete vm.cnImagePreviews[vm.cnKey];
       }
       vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
+      console.log("vm.cnPreviewPath: ", vm.cnPreviewPath);
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+      console.log("vm.filePath: ", vm.filePath);
 
       $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: vm.ngModel });
 

@@ -3,6 +3,7 @@
 
   // Include gulp
   const gulp = require('gulp');
+  console.log(gulp);
 
   // Include Our Plugins
   const babel = require('gulp-babel');
