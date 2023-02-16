@@ -1156,7 +1156,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
 
-      $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: vm.ngModel });
+      $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: response.media_key });
 
       var ngModelController = getNgModelController($scope);
       if (ngModelController) {
