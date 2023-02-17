@@ -3,9 +3,9 @@
 echo "Installing Dependencies..."
 npm install
 #composer update
-bower cache clean
-bower install
-bower update
+npx bower cache clean
+npx bower install
+npx bower update
 
 echo "Running gulp..."
-gulp build
+npx gulp build
