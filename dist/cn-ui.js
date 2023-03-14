@@ -2113,7 +2113,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             truncateToggleButton.hide();
           }
         }
-        truncateToggleButton = angular.element('<a class="truncate-expand-toggle"></a>');
+        var truncateToggleButton = angular.element('<a class="truncate-expand-toggle"></a>');
         truncateToggleButton.on('click', truncate);
         elem.after(truncateToggleButton);
 
