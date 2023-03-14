@@ -31,16 +31,17 @@
               elem.text(truncated ? ogText : shortText);
               truncated = !truncated;
               if (truncatable) {
-                expandButton.show();
-                expandButton.text(truncated ? 'Show more' : 'Show less');
+                truncateToggleButton.show();
+                truncateToggleButton.text(truncated ? 'Show more' : 'Show less');
               } else {
-                expandButton.hide();
+                truncateToggleButton.hide();
               }
             }
-            var expandButton;
-            expandButton = angular.element('<a class="truncate-expand-toggle"></a>');
-            expandButton.on('click', truncate);
-            elem.after(expandButton);
+            truncateToggleButton = angular.element(
+              '<a class="truncate-expand-toggle"></a>'
+            );
+            truncateToggleButton.on('click', truncate);
+            elem.after(truncateToggleButton);
 
             truncate();
 
