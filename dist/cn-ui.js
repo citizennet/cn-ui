@@ -1959,7 +1959,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a>Dismiss</a>'
+      closeHtml: '<a tabindex="0">Dismiss</a>'
     };
 
     var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
@@ -2099,13 +2099,23 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
 
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
+            truncatable = ogText.length > $scope.size,
+            shortText = truncatable ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
           elem.text(truncated ? ogText : shortText);
           truncated = !truncated;
+          if (truncatable) {
+            truncateToggleButton.show();
+            truncateToggleButton.text(truncated ? 'Show more' : 'Show less');
+          } else {
+            truncateToggleButton.hide();
+          }
         }
+        truncateToggleButton = angular.element('<a class="truncate-expand-toggle"></a>');
+        truncateToggleButton.on('click', truncate);
+        elem.after(truncateToggleButton);
 
         truncate();
 
