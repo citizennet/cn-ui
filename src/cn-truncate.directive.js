@@ -37,7 +37,7 @@
                 truncateToggleButton.hide();
               }
             }
-            truncateToggleButton = angular.element(
+            var truncateToggleButton = angular.element(
               '<a class="truncate-expand-toggle"></a>'
             );
             truncateToggleButton.on('click', truncate);
