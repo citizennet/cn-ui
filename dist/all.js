@@ -1150,6 +1150,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+
+      $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: response.media_key });
+
       var ngModelController = getNgModelController($scope);
       if (ngModelController) {
         _.each(ngModelController.$error, function (v, e) {
@@ -1959,7 +1962,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       body: 'simple-toast',
       bodyOutputType: 'directive',
       tapToDismiss: false,
-      closeHtml: '<a tabindex="0">Dismiss</a>'
+      closeHtml: '<a>Dismiss</a>'
     };
 
     var rslistener = $rootScope.$on("citizenNet:toastEvent", function (event, options) {
