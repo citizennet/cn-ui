@@ -22,14 +22,25 @@
             });
 
             var ogText = $scope.text || '',
-                shortText = ogText.length > $scope.size ?
+                truncatable = ogText.length > $scope.size,
+                shortText = truncatable ?
                   ogText.substr(0, $scope.size) + '\u2026' : ogText,
                 truncated = false;
 
             function truncate() {
               elem.text(truncated ? ogText : shortText);
               truncated = !truncated;
+              if (truncatable) {
+                expandButton.show();
+                expandButton.text(truncated ? 'Show more' : 'Show less');
+              } else {
+                expandButton.hide();
+              }
             }
+            var expandButton;
+            expandButton = angular.element('<a class="truncate-expand-toggle"></a>');
+            expandButton.on('click', truncate);
+            elem.after(expandButton);
 
             truncate();
 
