@@ -19,7 +19,7 @@
             <div ng-show="vm.form.view === \'new\'" ng-transclude/>\
             <div ng-show="vm.form.view === \'list\'" class="cn-list">\
               <table class="list-group table card-flex">\
-                <tr ng-repeat="item in vm.selectFrom"\
+                <tr ng-repeat="item in vm.partSelectFrom"\
                     selection-model\
                     selection-model-type="checkbox"\
                     selection-model-cleanup-strategy="deselect"\
@@ -32,6 +32,9 @@
                   <td class="col-sm-11" ng-bind-html="vm.processTemplate(item)"></td>\
                 </tr>\
               </table>\
+              <div style="display: flex; justify-content: flex-end">\
+                <a ng-click="vm.showMore()">show more</a>\
+              </div >\
             </div>\
           </div>\
         ';
@@ -86,6 +89,14 @@
     vm.processTemplate = processTemplate;
     vm.setValue = setValue;
     vm.toggleView = toggleView;
+
+    // limit the number of items to display
+    let displayLimit = 20;
+    vm.partSelectFrom = vm.selectFrom.slice(0, displayLimit)
+    vm.showMore = function () {
+      displayLimit += 20; // increase the number of items to display
+      vm.partSelectFrom = vm.selectFrom.slice(0, displayLimit);
+    };
 
     $scope.$watch('vm.selected.length', vm.onSelectionChange);
 
