@@ -444,11 +444,11 @@
 
       function formatVal(val) {
         if (!val) val = '';else if (format === 'cents') {
-          val = _.floor(val / 100, 2) || '';
+          val = _.round(val / 100, 2) || '';
         } else if (format === 'microcents') {
-          val = _.floor(val / 1000000, 2) || '';
+          val = _.round(val / 1000000, 2) || '';
         } else {
-          val = _.floor(val, 2) || '';
+          val = _.round(val, 2) || '';
         }
         return (/\.\d$/.test(val) ? val + '0' : val
         );
@@ -535,6 +535,9 @@
         if (actual === null || expected === null) {
           // No substring matching against `null`; only match against `null`
           return actual === expected;
+        }
+        if (actual.toString().startsWith('__uniqueid')) {
+          return false;
         }
         if (angular.isObject(expected) || angular.isObject(actual) && !hasCustomToString(actual)) {
           // Should not compare primitives against objects, unless they have custom `toString` method
@@ -1054,6 +1057,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
         if (vm.ngModel.media) {
           vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else if (vm.ngModel.video_url) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.video_url);
         } else {
           vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
         }
@@ -1063,6 +1068,14 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     function updatePreview() {
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+      } else if (vm.cnFileType === 'video' && vm.ngModel) {
+        if (vm.ngModel.media) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else if (vm.ngModel.video_url) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.video_url);
+        } else {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+        }
       } else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
         vm.filePath = $sce.trustAsResourceUrl(_.get(vm.cnImagePreviews, vm.cnKey));
       }
@@ -1073,17 +1086,25 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       dfr.promise.then(setFilePath).catch(handleError);
       var file = $files[0];
       if (file.type.includes("image")) {
-        var step = file.size;
         vm.cnFileType = "image";
-      } else {
-        var step = 1024 * 1024 * 8;
+      } else if (file.type.includes("video")) {
         vm.cnFileType = "video";
+      } else {
+        vm.cnFileType = file.type.slice(0, file.type.indexOf('/'));
       }
-      var blob = file.slice();
+      if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
+        var step = file.size;
+        if (step > 1024 * 1024 * 50) {
+          var msg = 'The image you are trying to upload is too big. The max size is 50 MB';
+          dfr.reject({ responseText: JSON.stringify({ error: msg }) });
+        }
+      } else {
+        var step = 1024 * 1024 * 2;
+      }
       var reader = new FileReader();
-      reader.readAsBinaryString(blob);
+      reader.readAsArrayBuffer(file);
       reader.onload = function (e) {
-        var fileHash = md5.createHash(reader.result);
+        var fileHash = SparkMD5.ArrayBuffer.hash(e.target.result);
         uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash);
       };
       cfpLoadingBar.start();
@@ -1093,6 +1114,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       var size = file.size;
       var blob = file.slice(start, start + step);
       var formData = new FormData();
+      formData.append("mediaType", file.type);
       if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash);
         formData.append("file", blob);
@@ -1118,7 +1140,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         contentType: false,
         type: 'POST',
         success: function success(response) {
-          if (response.media_object || response.filename || response.cn_preview_url || response.media_url) {
+          if (response.media_object || response.cn_preview_url || response.media_url || response.path) {
             dfr.resolve(response);
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash);
@@ -1136,6 +1158,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
       vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+
+      $scope.$emit("cnMediaUpload.uploaded", { cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: response.media_key });
+
       var ngModelController = getNgModelController($scope);
       if (ngModelController) {
         _.each(ngModelController.$error, function (v, e) {
@@ -1754,7 +1779,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             <div ng-show="vm.form.view === \'new\'" ng-transclude/>\
             <div ng-show="vm.form.view === \'list\'" class="cn-list">\
               <table class="list-group table card-flex">\
-                <tr ng-repeat="item in vm.selectFrom"\
+                <tr ng-repeat="item in vm.partSelectFrom"\
                     selection-model\
                     selection-model-type="checkbox"\
                     selection-model-cleanup-strategy="deselect"\
@@ -1767,6 +1792,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                   <td class="col-sm-11" ng-bind-html="vm.processTemplate(item)"></td>\
                 </tr>\
               </table>\
+              <div style="display: flex; justify-content: flex-end">\
+                <a ng-click="vm.showMore()">show more</a>\
+              </div >\
             </div>\
           </div>\
         ';
@@ -1821,6 +1849,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     vm.processTemplate = processTemplate;
     vm.setValue = setValue;
     vm.toggleView = toggleView;
+
+    // limit the number of items to display
+    var displayLimit = 20;
+    vm.partSelectFrom = vm.selectFrom.slice(0, displayLimit);
+    vm.showMore = function () {
+      displayLimit += 20; // increase the number of items to display
+      vm.partSelectFrom = vm.selectFrom.slice(0, displayLimit);
+    };
 
     $scope.$watch('vm.selected.length', vm.onSelectionChange);
 
@@ -2085,13 +2121,23 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         });
 
         var ogText = $scope.text || '',
-            shortText = ogText.length > $scope.size ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
+            truncatable = ogText.length > $scope.size,
+            shortText = truncatable ? ogText.substr(0, $scope.size) + '\u2026' : ogText,
             truncated = false;
 
         function truncate() {
           elem.text(truncated ? ogText : shortText);
           truncated = !truncated;
+          if (truncatable) {
+            truncateToggleButton.show();
+            truncateToggleButton.text(truncated ? 'Show more' : 'Show less');
+          } else {
+            truncateToggleButton.hide();
+          }
         }
+        var truncateToggleButton = angular.element('<a class="truncate-expand-toggle"></a>');
+        truncateToggleButton.on('click', truncate);
+        elem.after(truncateToggleButton);
 
         truncate();
 

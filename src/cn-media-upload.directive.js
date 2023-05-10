@@ -69,6 +69,8 @@
       } else if (vm.cnFileType === 'video' && vm.ngModel) {
         if (vm.ngModel.media) {
           vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else if (vm.ngModel.video_url) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.video_url);
         } else {
           vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
         }
@@ -78,7 +80,15 @@
     function updatePreview() {
       if (vm.cnFileType === 'image' && vm.ngModel && vm.ngModel.includes && vm.ngModel.includes("/")) {
         vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
-      }
+      }else if (vm.cnFileType === 'video' && vm.ngModel) {
+        if (vm.ngModel.media) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.media);
+        } else if (vm.ngModel.video_url) {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel.video_url);
+        } else {
+          vm.filePath = $sce.trustAsResourceUrl(vm.ngModel);
+        }
+      } 
       else if (_.get(vm.cnImagePreviews, vm.cnKey)) {
         vm.filePath = $sce.trustAsResourceUrl(_.get(vm.cnImagePreviews, vm.cnKey));
       }
@@ -87,20 +97,30 @@
     function uploadFile($files) {
       var dfr = $q.defer();
       dfr.promise.then(setFilePath).catch(handleError);
-      var file = $files[0]
+      var file = $files[0];
       if (file.type.includes("image")) {
-        var step = file.size
         vm.cnFileType = "image";
       }
-      else {
-        var step = 1024 * 1024 * 8
+      else if (file.type.includes("video")) {
         vm.cnFileType = "video";
       }
-      var blob = file.slice()
-      var reader = new FileReader()
-      reader.readAsBinaryString(blob)
+      else {
+        vm.cnFileType = file.type.slice(0, file.type.indexOf('/'));
+      }
+      if (!vm.cnUploadPath.includes('twitter') && file.type.includes("image")) {
+        var step = file.size;
+        if (step > 1024 * 1024 * 50) {
+          let msg = 'The image you are trying to upload is too big. The max size is 50 MB';
+          dfr.reject({ responseText: JSON.stringify({ error: msg }) });
+        }
+      }
+      else {
+        var step = 1024 * 1024 * 2;
+      }
+      var reader = new FileReader();
+      reader.readAsArrayBuffer(file);
       reader.onload = function(e) {
-        var fileHash = md5.createHash(reader.result)
+        var fileHash = SparkMD5.ArrayBuffer.hash(e.target.result);
         uploadFile_(file, 0, step, dfr, uuid4.generate(), fileHash)
       }
       cfpLoadingBar.start();
@@ -110,6 +130,7 @@
       var size = file.size
       var blob = file.slice(start, start + step)
       var formData = new FormData();
+      formData.append("mediaType", file.type)
       if (vm.cnUploadPath.includes('api/v2/media/upload')) {
         formData.append("content_hash", fileHash)
         formData.append("file", blob);
@@ -136,7 +157,7 @@
         contentType: false,
         type: 'POST',
         success: (response) => {
-	        if (response.media_object || response.filename || response.cn_preview_url || response.media_url)  {
+	        if (response.media_object || response.cn_preview_url || response.media_url || response.path)  {
             dfr.resolve(response)
           } else if (start + step < size) {
             uploadFile_(file, start + step, step, dfr, uuid, fileHash)
@@ -154,6 +175,9 @@
       vm.cnModelValueKey = vm.cnModelValueKey || vm.cnForm.valueProperty;
       vm.ngModel = response[vm.cnModelValueKey || 'media_id_string'];
       vm.filePath = $sce.trustAsResourceUrl(response[vm.cnPreviewPath || 'cn_preview_url']);
+      
+      $scope.$emit("cnMediaUpload.uploaded", {cn_preview_url: response[vm.cnPreviewPath || 'cn_preview_url'], media_key: response.media_key});
+
       let ngModelController = getNgModelController($scope);
       if (ngModelController) {
         _.each(ngModelController.$error, (v, e) => {

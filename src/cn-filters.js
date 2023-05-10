@@ -31,6 +31,9 @@
           // No substring matching against `null`; only match against `null`
           return actual === expected;
         }
+        if (actual.toString().startsWith('__uniqueid')) {
+          return false;
+        }
         if (angular.isObject(expected) || (angular.isObject(actual) && !hasCustomToString(actual))) {
           // Should not compare primitives against objects, unless they have custom `toString` method
           return false;
